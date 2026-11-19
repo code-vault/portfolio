@@ -1,0 +1,21 @@
+---
+// "What I do": six tiles from capabilities.json.
+import { getCollection } from 'astro:content';
+import SectionHeading from './SectionHeading.astro';
+
+// Note: the reveal animation is on the <li>, the hover lift on the inner card, so they never fight.
+const tiles = (await getCollection('capabilities')).sort((a, b) => Number(a.id) - Number(b.id));
+---
+<section id="what-i-do" aria-labelledby="what-i-do-title" class="mx-auto max-w-5xl px-6 py-20">
+  <SectionHeading id="what-i-do-title" title="What I do" />
+  <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {tiles.map(({ data }, i) => (
+      <li data-reveal data-reveal-delay={(i % 3) * 0.08}>
+        <article class="card-lift h-full rounded-2xl border border-border bg-surface p-6">
+          <h3 class="text-lg font-semibold text-accent">{data.title}</h3>
+          <p class="mt-3 leading-relaxed text-muted">{data.description}</p>
+        </article>
+      </li>
+    ))}
+  </ul>
+</section>

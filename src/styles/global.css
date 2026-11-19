@@ -51,3 +51,6 @@ html { scroll-padding-top: 5rem; }
     box-shadow: 0 12px 30px -12px color-mix(in srgb, var(--color-accent) 35%, transparent);
   }
 }
+
+/* Mobile menu open: the page behind must not scroll (class is set by src/scripts/mobileMenu.ts). */
+html.menu-open { overflow: hidden; }

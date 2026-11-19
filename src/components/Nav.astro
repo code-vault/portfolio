@@ -1,9 +1,14 @@
 ---
-// Sticky top nav. `links` must match the section ids on the page.
-// The active-section highlight is handled by src/scripts/activeNav.ts.
+// Top navigation.
+//   Desktop (>=768px): inline links in the bar.
+//   Mobile  (<768px):  a menu button in the bar that opens a full-screen overlay with large stacked links.
+// Both menus are rendered from the same `links` list, so they can never drift apart.
+//   - Active-section highlight: src/scripts/activeNav.ts
+//   - Mobile menu behaviour (focus, Esc, scroll lock): src/scripts/mobileMenu.ts
 interface Props { name: string }
 const { name } = Astro.props;
 
+// Section ids must exist on the page. (About is linked from the footer instead.)
 const links = [
   { href: '#work', label: 'Work' },
   { href: '#what-i-do', label: 'What I do' },
@@ -12,29 +17,78 @@ const links = [
   { href: '#contact', label: 'Contact' },
 ];
 ---
-<header class="sticky top-0 z-50 border-b border-border bg-bg/90 backdrop-blur">
-  <nav aria-label="Main" class="mx-auto flex max-w-5xl items-center gap-6 px-6 py-3">
-    <a href="#top" class="shrink-0 font-semibold text-text">{name}</a>
-    <!-- On narrow screens the link list scrolls sideways inside the nav (the page itself never does). -->
-    <ul class="flex gap-1 overflow-x-auto" data-nav-links>
+<header class="site-header sticky top-0 z-50 border-b border-border bg-bg/90 backdrop-blur" data-site-header>
+  <nav aria-label="Main" class="mx-auto flex max-w-5xl items-center justify-between gap-6 px-6 py-3 md:justify-start">
+    <a href="#top" data-brand class="inline-flex min-h-11 shrink-0 items-center font-semibold text-text">{name}</a>
+
+    <!-- Desktop links -->
+    <ul class="hidden gap-1 md:flex" data-nav-links>
       {links.map((l) => (
         <li>
-          <a
-            href={l.href}
-            class="nav-link block whitespace-nowrap rounded-md px-3 py-2 text-sm text-muted transition-colors hover:text-text"
-          >{l.label}</a>
+          <a href={l.href} class="nav-link block whitespace-nowrap rounded-md px-3 py-2 text-sm text-muted transition-colors hover:text-text">{l.label}</a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Mobile menu button (disclosure pattern): its name stays "Menu", aria-expanded says open/closed -->
+    <button
+      type="button"
+      class="menu-button -mr-2 inline-flex h-11 w-11 items-center justify-center rounded-md text-text md:hidden"
+      aria-label="Menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-menu-button
+    >
+      <svg class="icon-open" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+  </nav>
+</header>
+
+<!-- Mobile overlay. It sits OUTSIDE the header on purpose: the header's blur effect would otherwise
+     trap a fixed-position child inside the header's box. The header stays above it (z-50 vs z-40),
+     so the ✕ button remains clickable. -->
+<div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-bg px-6 pb-10 pt-24 md:hidden" hidden data-mobile-menu>
+  <nav aria-label="Mobile">
+    <ul class="flex flex-col" data-nav-links>
+      {links.map((l) => (
+        <li>
+          <a href={l.href} class="nav-link block min-h-11 border-b border-border py-5 text-3xl font-semibold text-text">{l.label}</a>
         </li>
       ))}
     </ul>
   </nav>
-</header>
+</div>
 
 <style>
   /* Set by activeNav.ts on the link of the section currently in view. */
   .nav-link[aria-current='location'] { color: var(--color-accent); }
+
+  /* ☰ shows when closed, ✕ when open */
+  .menu-button .icon-close { display: none; }
+  .menu-button[aria-expanded='true'] .icon-open { display: none; }
+  .menu-button[aria-expanded='true'] .icon-close { display: block; }
+
+  /* While the menu is open the bar becomes solid, so nothing shows through it. */
+  .site-header[data-menu-open] { background: var(--color-bg); }
+
+  /* Short fade/slide-in when the menu opens (skipped entirely for reduced motion) */
+  @media (prefers-reduced-motion: no-preference) {
+    .mobile-menu:not([hidden]) { animation: menu-in 0.2s ease-out; }
+  }
+  @keyframes menu-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: none; }
+  }
 </style>
 
 <script>
   import { initActiveNav } from '../scripts/activeNav';
+  import { initMobileMenu } from '../scripts/mobileMenu';
   initActiveNav();
+  initMobileMenu();
 </script>

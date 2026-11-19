@@ -24,7 +24,11 @@ The owner wants code they can read and maintain: **simple and well commented bea
   capabilities.json, site.json). Changing content must never require touching components.
 - A missing required field must fail the build with a clear Zod error.
 - No photo. No tracking or analytics scripts.
-- **No resume PDF on the site.** The Contact section says "Resume available on request". PDFs are gitignored.
+- **Resume:** the site offers a "Download resume" button for `public/resume/Devarshi_Ojha_Resume.pdf`.
+  The file there is currently a **local-preview copy of the full resume (contains a phone number)**. It is
+  excluded from git via `.git/info/exclude`. Before the GitHub repo is created or anything is pushed, the owner must
+  replace it with a website copy with **no phone number**, then remove that exclude line and commit it.
+  Root-level PDFs (`/*.pdf`) are gitignored.
 
 ## Design
 Dark theme, one accent colour (teal `#2dd4bf`) on near-black slate, Inter, generous spacing,

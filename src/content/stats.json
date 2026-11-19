@@ -1,0 +1,8 @@
+[
+  { "value": "9+", "label": "years in quality engineering" },
+  { "value": "8h → 3h", "label": "regression after Playwright migration" },
+  { "value": "~500", "label": "test cases from agentic generation" },
+  { "value": "5–6h → ~3h", "label": "AI evaluation run time" },
+  { "value": "16", "label": "business verticals on my CoE framework" },
+  { "value": "20+", "label": "QA engineers trained" }
+]

@@ -13,5 +13,5 @@ test-results/
 .env
 .env.*
 
-# Resume PDF: kept locally only, never published or committed (may contain personal contact details)
-*.pdf
+# Resume PDFs in the repo root are local only (they may contain a phone number)
+/*.pdf

@@ -1,0 +1,8 @@
+[
+  { "title": "AI & GenAI Evaluation", "description": "Golden datasets, LLM metrics and CI gates that catch AI regressions before users do" },
+  { "title": "Automation Architecture", "description": "Playwright, Selenium and Appium frameworks built to scale across teams" },
+  { "title": "Agentic QA", "description": "AI agents that turn specs into tests, with a person reviewing every change" },
+  { "title": "API & Integration", "description": "REST, GraphQL, Kafka and data-replication testing for microservices" },
+  { "title": "Performance & NFR", "description": "Load testing with JMeter and k6, monitoring with Grafana, Datadog and Dynatrace" },
+  { "title": "QA Leadership", "description": "Test strategy, release sign-off, CoE standards and mentoring" }
+]

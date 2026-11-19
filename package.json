@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "test": "npm run build && playwright test --project=site",
-    "test:external": "npm run build && playwright test --project=external"
+    "test:external": "npm run build && playwright test --project=external",
+    "lighthouse": "npm run build && lhci autorun"
   },
   "type": "module",
   "dependencies": {
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "@axe-core/playwright": "^4.14.0",
+    "@lhci/cli": "^0.16.1",
     "@playwright/test": "^1.65.1",
     "sharp": "^0.35.5",
     "typescript": "^6.0.3"

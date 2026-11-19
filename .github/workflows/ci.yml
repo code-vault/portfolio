@@ -1,0 +1,110 @@
+# CI/CD for the portfolio.
+#
+#   every push and pull request:  quality  (type-check -> build -> Playwright -> Lighthouse)
+#                                 external-links (non-blocking, just a heads-up)
+#   push to main only:            deploy   (runs ONLY if `quality` passed)
+#
+# To add a new required check, add a step to the `quality` job. If any step fails,
+# the job fails and `deploy` never runs.
+
+name: CI
+
+on:
+  push:
+  pull_request:
+
+# Least privilege by default. The deploy job asks for the extra Pages permissions it needs.
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Type-check, build, test, Lighthouse
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc # same Node version as local development
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check (astro check)
+        run: npm run check
+
+      - name: Build (also generates og.png)
+        run: npm run build
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Playwright tests (blocking set)
+        run: npx playwright test --project=site
+
+      - name: Lighthouse CI (3 runs, median >= 90 in every category)
+        run: npx lhci autorun
+
+      # Save reports so you can look at them when something fails.
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload Lighthouse reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      # Only package the site for deployment when we are on main (the deploy job picks it up).
+      - name: Package site for GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist/
+
+  # Checks other people's websites. They can be down or block bots, so this must NOT block deploys:
+  # it is not listed in the deploy job's `needs`, and continue-on-error keeps the run green.
+  external-links:
+    name: External links (non-blocking)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --project=external
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: quality # <- deploy only if every check above passed
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write # publish to GitHub Pages
+      id-token: write # lets GitHub verify the deploy came from this workflow
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false # never cancel a deploy half way
+    steps:
+      - uses: actions/configure-pages@v6
+      - id: deployment
+        uses: actions/deploy-pages@v5

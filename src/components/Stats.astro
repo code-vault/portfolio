@@ -11,16 +11,15 @@ const stats = (await getCollection('stats')).sort((a, b) => Number(a.id) - Numbe
       <div
         data-reveal
         data-reveal-delay={i * 0.07}
-        class="rounded-xl border border-border bg-surface p-5 sm:p-6"
+        class="flex flex-col-reverse gap-1 rounded-xl border border-border bg-surface p-5 sm:p-6"
       >
-        <!-- dt/dd order is label then value (good for screen readers); flex-col-reverse shows value on top -->
-        <div class="flex flex-col-reverse gap-1">
-          <dt class="text-sm text-muted">{data.label}</dt>
-          <dd class="text-3xl font-bold text-accent sm:text-4xl">
-            <span aria-hidden="true" data-count={data.value}>{data.value}</span>
-            <span class="sr-only">{data.value}</span>
-          </dd>
-        </div>
+        <!-- dt/dd are direct children of this group <div>. Label comes first for screen readers;
+             flex-col-reverse shows the value on top visually. -->
+        <dt class="text-sm text-muted">{data.label}</dt>
+        <dd class="text-3xl font-bold text-accent sm:text-4xl">
+          <span aria-hidden="true" data-count={data.value}>{data.value}</span>
+          <span class="sr-only">{data.value}</span>
+        </dd>
       </div>
     ))}
   </dl>

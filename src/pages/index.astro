@@ -7,15 +7,16 @@ import Work from '../components/Work.astro';
 import Capabilities from '../components/Capabilities.astro';
 import Experience from '../components/Experience.astro';
 import Skills from '../components/Skills.astro';
+import About from '../components/About.astro';
+import Contact from '../components/Contact.astro';
 ---
 <BaseLayout>
-  <!-- TEMPORARY placeholders: each is replaced by a real component in steps 4-8. -->
   <Hero />
   <Stats />
   <Work />
   <Capabilities />
   <Experience />
   <Skills />
-  <section id="about" class="mx-auto min-h-[80vh] max-w-5xl px-6 py-24"><h2 class="text-2xl font-semibold">About (step 8)</h2></section>
-  <section id="contact" class="mx-auto min-h-[80vh] max-w-5xl px-6 py-24"><h2 class="text-2xl font-semibold">Contact (step 8)</h2></section>
+  <About />
+  <Contact />
 </BaseLayout>

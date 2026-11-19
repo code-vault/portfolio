@@ -31,4 +31,15 @@ export function initActiveNav(): void {
   );
 
   pairs.forEach((p) => observer.observe(p.section));
+
+  // The last section (Contact) is short, so it can never reach the highlight band.
+  // When the visitor scrolls to the very bottom of the page, highlight the last link instead.
+  window.addEventListener(
+    'scroll',
+    () => {
+      const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      if (atBottom && pairs.length > 0) setActive(pairs[pairs.length - 1].link);
+    },
+    { passive: true },
+  );
 }

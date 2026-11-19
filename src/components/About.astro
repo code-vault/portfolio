@@ -1,0 +1,11 @@
+---
+// About: one paragraph, from site.json.
+import { getEntry } from 'astro:content';
+import SectionHeading from './SectionHeading.astro';
+
+const site = (await getEntry('site', 'site'))!.data;
+---
+<section id="about" aria-labelledby="about-title" class="mx-auto max-w-5xl px-6 py-20">
+  <SectionHeading id="about-title" title="About" />
+  <p data-reveal class="max-w-3xl text-lg leading-relaxed text-muted sm:text-xl">{site.about}</p>
+</section>

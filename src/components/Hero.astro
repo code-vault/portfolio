@@ -1,0 +1,40 @@
+---
+// Hero: name, headline, one-liner, buttons and the animated pipeline.
+// All text and links come from site.json.
+import { getEntry } from 'astro:content';
+import Pipeline from './Pipeline.astro';
+
+const site = (await getEntry('site', 'site'))!.data;
+
+// Shared button styles. "primary" is the filled accent button.
+const base = 'inline-flex items-center rounded-lg px-5 py-3 font-semibold transition-colors';
+const primary = `${base} bg-accent text-bg hover:brightness-110`;
+const secondary = `${base} border border-border text-text hover:border-accent hover:text-accent`;
+---
+<section id="top" class="mx-auto max-w-5xl px-6 pb-20 pt-20 md:pt-28">
+  <div class="hero-in">
+    <h1 class="text-4xl font-bold tracking-tight sm:text-6xl">{site.name}</h1>
+    <p class="mt-3 text-xl font-medium text-accent sm:text-2xl">{site.headline}</p>
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted">{site.oneLiner}</p>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="#work" class={primary}>View my work</a>
+      <a href={site.resumePath} download class={secondary}>Download resume</a>
+      <a href={site.links.github} target="_blank" rel="noopener noreferrer" class={secondary}>GitHub</a>
+      <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" class={secondary}>LinkedIn</a>
+    </div>
+  </div>
+
+  <div class="mt-16 rounded-2xl border border-border bg-surface p-6 md:p-8">
+    <Pipeline steps={site.pipeline} />
+  </div>
+</section>
+
+<style>
+  .hero-in { animation: hero-in 0.7s ease-out both; }
+  @keyframes hero-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-in { animation: none; } }
+</style>

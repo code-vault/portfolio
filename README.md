@@ -146,7 +146,7 @@ src/
 ├─ components/         one component per section, plus small shared pieces
 ├─ layouts/            BaseLayout.astro: <head>, SEO, nav, footer
 ├─ pages/              index.astro (assembles sections) and 404.astro
-├─ scripts/            small TypeScript modules: reveal, count-up, active-nav
+├─ scripts/            small TypeScript modules: reveal, count-up, active-nav, mobile-menu
 └─ styles/global.css   Tailwind import and theme tokens (accent colour lives here)
 scripts/generate-og.mjs  builds public/og.png from site.json at build time
 tests/                 Playwright specs

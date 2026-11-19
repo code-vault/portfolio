@@ -58,6 +58,14 @@ First time only: `npx playwright install chromium`.
 - `@types/node` is deliberately not installed (not approved). `playwright.config.ts` declares the one Node global it needs.
 
 ## Other decisions
+- Nav: 5 links (Work, What I do, Experience, Skills, Contact). About stays on the page and is linked from the footer.
+  Below 768px a menu button opens a full-screen overlay (`src/scripts/mobileMenu.ts`): disclosure pattern, focus trap,
+  Esc closes and returns focus to the button, page behind is `inert` and scroll-locked. The overlay is rendered
+  OUTSIDE the header on purpose (the header's backdrop-blur would trap a fixed child).
+- Active nav highlight is computed from scroll position (`src/scripts/activeNav.ts`), not from observer events.
+- In Playwright tests, open the mobile menu with a real mouse click at the button's position when checking scroll
+  (locator.click() scrolls a sticky element "into view" and wrongly moves the page).
+- Playwright's webServer uses `astro preview ... --ignore-lock` so a stale preview lock never makes it exit early.
 - Hero pipeline is pure CSS. Scroll-in and count-up use `motion` and skip when reduced motion is requested.
 - Reveal animations run on a wrapper element; the hover lift runs on the inner card, so they never fight.
 - `public/og.png` is generated (gitignored) from `site.json`. `public/robots.txt` and `public/sitemap.xml` are static; no sitemap package.

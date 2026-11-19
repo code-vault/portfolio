@@ -17,7 +17,7 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: `npm run preview -- --host 127.0.0.1 --port ${PORT}`,
+    command: `npm run preview -- --host 127.0.0.1 --port ${PORT} --ignore-lock`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: !process.env.CI,
   },

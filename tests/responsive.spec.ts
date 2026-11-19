@@ -29,8 +29,6 @@ for (const vp of VIEWPORTS) {
       const tooWide = await page.evaluate(() =>
         [...document.querySelectorAll('main *')]
           .filter((el) => el.getBoundingClientRect().right > window.innerWidth + 1)
-          // elements inside a deliberately scrollable region (the mobile nav link list) are allowed
-          .filter((el) => !el.closest('[data-nav-links]'))
           .map((el) => `${el.tagName.toLowerCase()}.${el.className}`.slice(0, 80)),
       );
       expect(tooWide).toEqual([]);

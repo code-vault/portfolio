@@ -5,7 +5,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "test": "npm run build && playwright test --project=site",
+    "test:external": "npm run build && playwright test --project=external"
   },
   "type": "module",
   "dependencies": {

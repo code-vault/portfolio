@@ -25,10 +25,9 @@ The owner wants code they can read and maintain: **simple and well commented bea
 - A missing required field must fail the build with a clear Zod error.
 - No photo. No tracking or analytics scripts.
 - **Resume:** the site offers a "Download resume" button for `public/resume/Devarshi_Ojha_Resume.pdf`.
-  The file there is currently a **local-preview copy of the full resume (contains a phone number)**. It is
-  excluded from git via `.git/info/exclude`. Before the GitHub repo is created or anything is pushed, the owner must
-  replace it with a website copy with **no phone number**, then remove that exclude line and commit it.
-  Root-level PDFs (`/*.pdf`) are gitignored.
+  That file is public, so it must be a **website copy with no phone number**. It is committed.
+  Root-level PDFs (`/*.pdf`) are gitignored and are the owner's local copies only.
+  Never commit or publish a PDF containing a phone number.
 
 ## Design
 Dark theme, one accent colour (teal `#2dd4bf`) on near-black slate, Inter, generous spacing,
@@ -38,13 +37,31 @@ Accessible: semantic HTML, keyboard navigable, visible focus, good contrast, hon
 
 ## Commands
 ```
-npm install        # install (use the Node version in .nvmrc)
-npm run dev        # local dev server
-npm run check      # astro check (TypeScript + Astro type-check)
-npm run build      # static build into dist/
-npm run preview    # serve the built site
+npm install              # install (use the Node version in .nvmrc)
+npm run dev              # local dev server, http://localhost:4321
+npm run check            # astro check (TypeScript + Astro type-check)
+npm run build            # static build into dist/ (prebuild generates public/og.png from site.json)
+npm run preview          # serve the built site
+npm test                 # build + Playwright, blocking project "site"
+npm run test:external    # build + external-link check (non-blocking in CI)
+npm run lighthouse       # build + Lighthouse CI (3 runs, median >= 0.9 in all four categories)
 ```
-Tests (added in a later step): `npx playwright test`, `npx lhci autorun`.
+First time only: `npx playwright install chromium`.
+
+## Testing and CI
+- Tests live in `tests/` and run against the **built** site (`astro preview`).
+- Playwright has two projects: `site` (blocking) and `external` (external links; own CI job, never blocks deploy;
+  401/403/405/429/999 count as "site is there").
+- `.github/workflows/ci.yml`: type-check -> build -> Playwright -> Lighthouse on every push/PR;
+  deploy to GitHub Pages only from `main` and only if `quality` passed.
+- Do not weaken a test to make it pass: fix the site, or explain why the test expectation is wrong.
+- `@types/node` is deliberately not installed (not approved). `playwright.config.ts` declares the one Node global it needs.
+
+## Other decisions
+- Hero pipeline is pure CSS. Scroll-in and count-up use `motion` and skip when reduced motion is requested.
+- Reveal animations run on a wrapper element; the hover lift runs on the inner card, so they never fight.
+- `public/og.png` is generated (gitignored) from `site.json`. `public/robots.txt` and `public/sitemap.xml` are static; no sitemap package.
+- Approved extra dev dependencies: `sharp` (OG image), `@axe-core/playwright`, `@lhci/cli`, `@playwright/test`.
 
 ## Workflow
 Small steps, one commit per step, clear commit messages.

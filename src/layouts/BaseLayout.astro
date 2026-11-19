@@ -5,7 +5,12 @@ import '../styles/global.css';
 import { getEntry } from 'astro:content';
 import Nav from '../components/Nav.astro';
 
+// Optional props: the 404 page passes `title` and `minimal` (no section nav) and `noindex`.
+interface Props { title?: string; minimal?: boolean; noindex?: boolean }
+const { title, minimal = false, noindex = false } = Astro.props;
+
 const site = (await getEntry('site', 'site'))!.data;
+const pageTitle = title ?? site.metaTitle;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO step
 ---
@@ -14,22 +19,22 @@ const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO ste
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{site.metaTitle}</title>
+    <title>{pageTitle}</title>
     <meta name="description" content={site.metaDescription} />
     <meta name="theme-color" content="#0b1016" />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <!-- Open Graph (link previews on LinkedIn, Slack, etc.) -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={site.metaTitle} />
+    <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={site.metaDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={site.metaTitle} />
+    <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={site.metaDescription} />
     <meta name="twitter:image" content={ogImage} />
 
@@ -38,7 +43,15 @@ const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO ste
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
-    <Nav name={site.name} />
+    {minimal ? (
+      <header class="border-b border-border">
+        <div class="mx-auto flex max-w-5xl items-center px-6 py-4">
+          <a href="/" class="font-semibold text-text">{site.name}</a>
+        </div>
+      </header>
+    ) : (
+      <Nav name={site.name} />
+    )}
     <main id="main">
       <slot />
     </main>

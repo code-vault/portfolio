@@ -15,3 +15,5 @@ test-results/
 
 # Resume PDFs in the repo root are local only (they may contain a phone number)
 /*.pdf
+# Generated at build time by scripts/generate-og.mjs
+public/og.png

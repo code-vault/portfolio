@@ -7,5 +7,5 @@ location: "Noida"
 highlights:
   - "Sole QA for a headless AEM CMS; authored its test framework from scratch"
   - "Contributed to Appium mobile automation on BrowserStack and real devices"
-tags: ["AEM", "Appium", "BrowserStack"]
+tags: ["AEM", "Selenium", "Appium", "BrowserStack"]
 ---

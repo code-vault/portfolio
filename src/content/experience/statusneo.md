@@ -8,5 +8,5 @@ highlights:
   - "Quality CoE framework adopted by 16 verticals; trained 20+ engineers"
   - "Led Selenium → Playwright migration for Avis Budget Group: regression 8h → 3h"
   - "Owned microservices, Kafka and data-replication testing in a mainframe-to-AWS modernization"
-tags: ["Selenium", "Playwright", "Kafka"]
+tags: ["Playwright", "Selenium", "REST Assured", "Kafka", "AWS", "Docker"]
 ---

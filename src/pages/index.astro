@@ -1,14 +1,14 @@
 ---
-import '../styles/global.css';
+// The page only assembles sections. Content comes from src/content/.
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Devarshi Ojha</title>
-  </head>
-  <body>
-    <main><h1 class="p-8 text-accent">Devarshi Ojha</h1></main>
-  </body>
-</html>
+<BaseLayout>
+  <!-- TEMPORARY placeholders: each is replaced by a real component in steps 4-8. -->
+  <section id="top" class="mx-auto max-w-5xl px-6 py-32"><h1 class="text-4xl font-bold">Hero (step 4)</h1></section>
+  <section id="work" class="mx-auto min-h-[80vh] max-w-5xl px-6 py-24"><h2 class="text-2xl font-semibold">Work (step 6)</h2></section>
+  <section id="what-i-do" class="mx-auto min-h-[80vh] max-w-5xl px-6 py-24"><h2 class="text-2xl font-semibold">What I do (step 7)</h2></section>
+  <section id="experience" class="mx-auto min-h-[80vh] max-w-5xl px-6 py-24"><h2 class="text-2xl font-semibold">Experience (step 7)</h2></section>
+  <section id="skills" class="mx-auto min-h-[80vh] max-w-5xl px-6 py-24"><h2 class="text-2xl font-semibold">Skills (step 7)</h2></section>
+  <section id="about" class="mx-auto min-h-[80vh] max-w-5xl px-6 py-24"><h2 class="text-2xl font-semibold">About (step 8)</h2></section>
+  <section id="contact" class="mx-auto min-h-[80vh] max-w-5xl px-6 py-24"><h2 class="text-2xl font-semibold">Contact (step 8)</h2></section>
+</BaseLayout>

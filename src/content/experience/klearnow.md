@@ -8,6 +8,5 @@ highlights:
   - "Led a QA team of ~6: test strategy, risk-based testing and release sign-off for production GenAI document processing"
   - "Owned and strengthened the AI evaluation framework; cut run time from 5–6 hours to ~3"
   - "Introduced agentic test generation (~500 test cases from Jira and Confluence specs)"
-# Tags only repeat terms already in the highlights above.
-tags: ["GenAI", "Jira", "Confluence"]
+tags: ["GenAI evaluation", "Agentic QA", "Playwright (TypeScript)", "DeepEval", "Arize", "REST Assured"]
 ---

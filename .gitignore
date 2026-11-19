@@ -1,0 +1,17 @@
+# dependencies and build output
+node_modules/
+dist/
+.astro/
+
+# test and CI output
+playwright-report/
+test-results/
+.lighthouseci/
+
+# local files
+.DS_Store
+.env
+.env.*
+
+# Resume PDF: kept locally only, never published or committed (may contain personal contact details)
+*.pdf

@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+/* Theme tokens. Change the accent colour here and it updates everywhere. */
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --color-bg: #0b1016;        /* near-black slate */
+  --color-surface: #131b24;   /* cards */
+  --color-border: #243040;
+  --color-text: #e6edf3;
+  --color-muted: #9fb0c0;
+  --color-accent: #2dd4bf;    /* teal, the single accent colour */
+}
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }

@@ -55,8 +55,10 @@ const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO ste
     <main id="main">
       <slot />
     </main>
-    <footer class="mx-auto max-w-5xl px-6 py-10 text-sm text-muted">
-      © {new Date().getFullYear()} {site.name}
+    <footer class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-10 text-sm text-muted">
+      <span>© {new Date().getFullYear()} {site.name}</span>
+      <!-- About is not in the top nav (to keep it short), so it is linked from here -->
+      <a href="#about" class="inline-flex min-h-11 items-center rounded-md px-2 hover:text-text">About</a>
     </footer>
     <script>
       import '../scripts/main';

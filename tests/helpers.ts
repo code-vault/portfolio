@@ -12,12 +12,11 @@ export async function scrollThroughPage(page: Page): Promise<void> {
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
 }
 
-// The sections in the nav, in order: nav label -> section id.
+// The links in the top nav, in order: nav label -> section id. (About is linked from the footer instead.)
 export const SECTIONS = [
   { label: 'Work', id: 'work' },
   { label: 'What I do', id: 'what-i-do' },
   { label: 'Experience', id: 'experience' },
   { label: 'Skills', id: 'skills' },
-  { label: 'About', id: 'about' },
   { label: 'Contact', id: 'contact' },
 ] as const;

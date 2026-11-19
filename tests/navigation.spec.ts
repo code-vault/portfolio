@@ -43,3 +43,18 @@ test('skip link is the first thing keyboard users reach and it jumps to main con
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#main$/);
 });
+
+test('desktop nav has exactly 5 links, in order, and no About', async ({ page }) => {
+  await page.goto('/');
+  const labels = await nav(page).locator('[data-nav-links]').first().getByRole('link').allTextContents();
+  expect(labels).toEqual(['Work', 'What I do', 'Experience', 'Skills', 'Contact']);
+});
+
+test('footer "About" link scrolls to the About section, and no nav link is highlighted there', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('contentinfo').getByRole('link', { name: 'About' }).click();
+  await expect(page).toHaveURL(/#about$/);
+  await expect(page.locator('#about')).toBeInViewport();
+  // About has no nav link, so the previous highlight must be cleared (not left on e.g. "Skills")
+  await expect(nav(page).locator('[aria-current="location"]')).toHaveCount(0, { timeout: 8000 });
+});

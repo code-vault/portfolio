@@ -39,5 +39,5 @@ html { scroll-padding-top: 5rem; }
 /* Scroll-in animation start state. Only applies when JS is on (class "js" is set in BaseLayout)
    and the visitor has NOT asked for reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
-  .js [data-reveal] { opacity: 0; transform: translateY(1.5rem); }
+  .js [data-reveal]:not([data-revealed]) { opacity: 0; transform: translateY(1.5rem); }
 }

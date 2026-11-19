@@ -1,0 +1,8 @@
+---
+// Shared heading for every page section, so they all look the same.
+interface Props { title: string; id?: string }
+const { title, id } = Astro.props;
+---
+<h2 id={id} class="mb-10 text-3xl font-bold tracking-tight sm:text-4xl">
+  <span class="text-accent" aria-hidden="true">/</span> {title}
+</h2>

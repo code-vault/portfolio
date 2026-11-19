@@ -1,0 +1,20 @@
+---
+// Smaller card for side projects (projects with `side: true`).
+import type { CollectionEntry } from 'astro:content';
+import TagList from './TagList.astro';
+
+interface Props { project: CollectionEntry<'projects'> }
+const { data } = Astro.props.project;
+---
+<div data-reveal>
+  <article class="card-lift flex flex-col gap-3 rounded-2xl border border-border bg-surface p-6">
+    <h3 class="text-lg font-semibold">{data.title}</h3>
+    <p class="text-muted leading-relaxed">{data.description}</p>
+    <TagList tags={data.tags} />
+    {data.link && (
+      <a href={data.link} target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-accent hover:underline">
+        Visit site <span aria-hidden="true">↗</span><span class="sr-only">(opens in a new tab)</span>
+      </a>
+    )}
+  </article>
+</div>

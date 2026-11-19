@@ -41,3 +41,13 @@ html { scroll-padding-top: 5rem; }
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal]:not([data-revealed]) { opacity: 0; transform: translateY(1.5rem); }
 }
+
+/* Cards lift slightly on hover/focus-within (not for reduced motion). */
+.card-lift { transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
+@media (prefers-reduced-motion: no-preference) {
+  .card-lift:hover, .card-lift:focus-within {
+    transform: translateY(-4px);
+    border-color: var(--color-accent);
+    box-shadow: 0 12px 30px -12px color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+}

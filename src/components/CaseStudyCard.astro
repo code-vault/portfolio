@@ -1,0 +1,55 @@
+---
+// One full case study: Problem -> Solution -> Impact, step-flow diagram, tags, optional link.
+// Content comes from a file in src/content/projects/.
+import type { CollectionEntry } from 'astro:content';
+import StepFlow from './StepFlow.astro';
+import TagList from './TagList.astro';
+
+interface Props { project: CollectionEntry<'projects'> }
+const { data } = Astro.props.project;
+const { problem, solution, impact, diagram } = data;
+
+// The schema already guarantees these exist for a case study; this just tells TypeScript.
+if (!problem || !solution || !impact || !diagram) {
+  throw new Error(`Case study "${data.title}" is missing problem, solution, impact or diagram.`);
+}
+
+const label = 'mb-2 text-xs font-semibold uppercase tracking-widest text-accent';
+---
+<!-- The reveal animation is on this wrapper; the hover lift is on the inner card, so they never fight. -->
+<li data-reveal>
+  <article class="card-lift rounded-2xl border border-border bg-surface p-6 sm:p-8">
+    <p class="text-sm text-muted">{data.company}</p>
+    <h3 class="mt-1 text-xl font-semibold sm:text-2xl">{data.title}</h3>
+
+    <div class="mt-6 grid gap-6 lg:grid-cols-3">
+      <div>
+        <h4 class={label}>Problem</h4>
+        <p class="text-muted leading-relaxed">{problem}</p>
+      </div>
+      <div>
+        <h4 class={label}>Solution</h4>
+        <p class="text-muted leading-relaxed">{solution}</p>
+      </div>
+      <div>
+        <h4 class={label}>Impact</h4>
+        <ul class="space-y-2 text-text">
+          {impact.map((item) => (
+            <li class="flex gap-2"><span class="text-accent" aria-hidden="true">▸</span><span>{item}</span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-8"><StepFlow steps={diagram} /></div>
+
+    <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+      <TagList tags={data.tags} />
+      {data.link && (
+        <a href={data.link} target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-accent hover:underline">
+          View on GitHub <span aria-hidden="true">↗</span><span class="sr-only">(opens in a new tab)</span>
+        </a>
+      )}
+    </div>
+  </article>
+</li>

@@ -1,12 +1,12 @@
 # CLAUDE.md
 
-Personal portfolio for Devarshi Ojha (Lead SDET, AI Quality & GenAI Evaluation).
+Personal portfolio for Devarshi Ojha (Lead SDET: test architecture for web, mobile and API products, and AI systems).
 The owner wants code they can read and maintain: **simple and well commented beats clever**.
 
 ## Stack (decided, do not change)
 - Astro (latest stable) + TypeScript (strict)
 - Tailwind CSS v4 (via `@tailwindcss/vite`, theme tokens in `src/styles/global.css`)
-- `motion` (vanilla JS) for animation; plain CSS where possible
+- `motion` (vanilla JS) for the scroll-in reveal only; plain CSS for everything else
 - Inter, self-hosted via `@fontsource-variable/inter` (no Google Fonts calls)
 - Content in Astro content collections with Zod schemas (`src/content.config.ts`)
 - Testing: Playwright (TypeScript) + axe-core, Lighthouse CI
@@ -20,8 +20,12 @@ The owner wants code they can read and maintain: **simple and well commented bea
 - Use ONLY content the owner has provided. **Never invent** numbers, companies, claims, testimonials or diagram steps.
 - If something is missing, leave a clearly marked `TODO` instead of guessing.
 - Copy is exact: use the owner's wording as given.
-- All editable content lives in `src/content/` (projects/, experience/, stats.json, skills.json,
-  capabilities.json, site.json). Changing content must never require touching components.
+- All editable content lives in `src/content/` (projects/, experience/, skills.json, capabilities.json, site.json).
+  Changing content must never require touching components. Small UI words (button labels such as "View my work",
+  card sub-labels such as PROBLEM / WHAT I DID) are the only text allowed in components.
+- The agreed copy comes from the owner's content draft `docs/content-v2.md` (kept locally, deliberately NOT committed).
+  Numbers appear only inside the project cards; elsewhere they are hinted at ("roughly halved", "sixteen teams").
+  `tests/content.spec.ts` pins the exact headline, intro, metrics and years: update it together with any copy change.
 - A missing required field must fail the build with a clear Zod error.
 - No photo. No tracking or analytics scripts.
 - **Resume:** the site offers a "Download resume" button for `public/resume/Devarshi_Ojha_Resume.pdf`.
@@ -30,10 +34,19 @@ The owner wants code they can read and maintain: **simple and well commented bea
   Never commit or publish a PDF containing a phone number.
 
 ## Design
-Dark theme, one accent colour (teal `#2dd4bf`) on near-black slate, Inter, generous spacing,
-single page, smooth scroll, sticky nav with active-section highlight. Mobile first.
-Accessible: semantic HTML, keyboard navigable, visible focus, good contrast, honour `prefers-reduced-motion`
-(all JS animations must check it).
+Light, editorial, minimal (Linear/Vercel-style portfolio), NOT a dark SaaS landing page:
+- Near-white page (`#fafafa`) with a very subtle violet tint at the top of the hero; white cards with 1px neutral
+  borders and large radius; soft shadow on hover. Inter, generous spacing, typography doing most of the work.
+- One accent, violet. Bright violet (`#7c3aed`, gradient to `#a855f7`) is for LARGE text and decoration only
+  (the hero accent word, big metric numbers, dots). Small text (labels, active nav) uses the darker `#6d28d9`
+  so contrast stays above 4.5:1.
+- Buttons: primary = black pill, secondary = white pill with border. Chips: small monospace on neutral-100.
+- No dark backgrounds, no green or teal anywhere, no boxed monospace stat tiles, no "product marketing" widgets.
+  `tests/content.spec.ts` fails if a dark surface or any green colour appears.
+- Three pages (Home, Projects, Experience), sticky top bar: "DO" monogram + name, Home / Projects / Experience,
+  and a black "Get in touch" pill (to `/#contact`). The current page gets `aria-current="page"`.
+- Mobile first and accessible: semantic HTML, one `h1` per page and no skipped heading levels, keyboard navigable,
+  visible focus, good contrast, honour `prefers-reduced-motion` (all JS animation must check it).
 
 ## Commands
 ```
@@ -58,17 +71,24 @@ First time only: `npx playwright install chromium`.
 - `@types/node` is deliberately not installed (not approved). `playwright.config.ts` declares the one Node global it needs.
 
 ## Other decisions
-- Nav: 5 links (Work, What I do, Experience, Skills, Contact). About stays on the page and is linked from the footer.
-  Below 768px a menu button opens a full-screen overlay (`src/scripts/mobileMenu.ts`): disclosure pattern, focus trap,
+- Custom component classes (`.btn`, `.label`, `.chip`, `.card`, `.gradient-text`) live in Tailwind's `components`
+  layer in `global.css`, and the global heading colour in the `base` layer, so utility classes can override them.
+  (Unlayered CSS beats Tailwind utilities: that once made a "hidden" button show and turned violet labels black.)
+- Below 768px a menu button opens a full-screen overlay (`src/scripts/mobileMenu.ts`): disclosure pattern, focus trap,
   Esc closes and returns focus to the button, page behind is `inert` and scroll-locked. The overlay is rendered
   OUTSIDE the header on purpose (the header's backdrop-blur would trap a fixed child).
-- Active nav highlight is computed from scroll position (`src/scripts/activeNav.ts`), not from observer events.
-- In Playwright tests, open the mobile menu with a real mouse click at the button's position when checking scroll
-  (locator.click() scrolls a sticky element "into view" and wrongly moves the page).
-- Playwright's webServer uses `astro preview ... --ignore-lock` so a stale preview lock never makes it exit early.
-- Hero pipeline is pure CSS. Scroll-in and count-up use `motion` and skip when reduced motion is requested.
+- Page titles and descriptions come from `site.json` (`pages.*`) via `BaseLayout`'s `page` prop. Canonical and
+  `og:url` use the page's own path (with trailing slash).
+- Case study cards and section headings take a heading level prop (`h2` on /projects, `h3` under a section heading on Home).
 - Reveal animations run on a wrapper element; the hover lift runs on the inner card, so they never fight.
-- `public/og.png` is generated (gitignored) from `site.json`. `public/robots.txt` and `public/sitemap.xml` are static; no sitemap package.
+- In Playwright tests: open the mobile menu with a real mouse click at the button's position when checking scroll
+  (locator.click() scrolls a sticky element "into view" and wrongly moves the page); the menu button is
+  `display:none` on desktop, so `getByRole` cannot see it there (use a CSS locator).
+- Playwright's webServer uses `astro preview ... --ignore-lock` so a stale preview lock never makes it exit early.
+- Lighthouse CI audits all three pages (3 runs each, median >= 0.9 in every category).
+- `public/og.png` is generated (gitignored) from `site.json` (name + badge). `public/robots.txt` and
+  `public/sitemap.xml` (3 URLs) are static; no sitemap package.
+- Role tags and locations stay in the experience files as optional data but are not displayed.
 - Approved extra dev dependencies: `sharp` (OG image), `@axe-core/playwright`, `@lhci/cli`, `@playwright/test`.
 
 ## Workflow

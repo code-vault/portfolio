@@ -7,7 +7,9 @@
         "chromeFlags": "--no-sandbox --headless=new"
       },
       "url": [
-        "http://localhost/index.html"
+        "http://localhost/index.html",
+        "http://localhost/projects/index.html",
+        "http://localhost/experience/index.html"
       ]
     },
     "assert": {

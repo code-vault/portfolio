@@ -1,0 +1,50 @@
+---
+// Vertical role timeline, newest first: a thin line with small violet dots.
+// Company and role in bold, years on the right in grey. One file per role in src/content/experience/.
+// (Tags and locations exist in the files but are not shown.)
+import { getCollection } from 'astro:content';
+
+interface Props { label: string }
+const { label } = Astro.props;
+
+// "MM/YYYY" -> sortable number (YYYYMM). "Present" sorts as newest.
+function sortKey(date: string): number {
+  if (date === 'Present') return Infinity;
+  const [month, year] = date.split('/');
+  return Number(year) * 100 + Number(month);
+}
+
+// Show years only: "06/2026" + "09/2026" -> "2026"; "02/2025" + "06/2026" -> "2025–2026".
+function years(start: string, end: string): string {
+  const from = start.slice(-4);
+  const to = end === 'Present' ? 'Present' : end.slice(-4);
+  return from === to ? from : `${from}–${to}`;
+}
+
+// Newest first: by start date, then by end date if two roles start the same month.
+const roles = (await getCollection('experience')).sort(
+  (a, b) => sortKey(b.data.start) - sortKey(a.data.start) || sortKey(b.data.end) - sortKey(a.data.end),
+);
+---
+<section aria-labelledby="roles-title" class="mx-auto max-w-6xl px-6 pb-16 sm:pb-24">
+  <h2 id="roles-title" class="label mb-8">{label}</h2>
+  <!-- The vertical line is the left border of the list; each dot sits on top of it -->
+  <ol class="ml-1.5 border-l border-border-strong">
+    {roles.map(({ data }) => (
+      <li data-reveal class="relative pb-12 pl-8 last:pb-0 sm:pl-10">
+        <span class="absolute -left-[5.5px] top-2 h-2.5 w-2.5 rounded-full bg-violet" aria-hidden="true"></span>
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+          <h3 class="text-xl font-bold tracking-tight text-text">
+            {data.company}{data.role && <span class="font-semibold"><span class="text-muted"> · </span>{data.role}</span>}
+          </h3>
+          <p class="shrink-0 text-sm text-muted sm:text-base">{years(data.start, data.end)}</p>
+        </div>
+        <ul class="mt-4 max-w-3xl space-y-3">
+          {data.highlights.map((h) => (
+            <li class="flex gap-3 leading-relaxed"><span class="mt-[0.7em] h-px w-3 shrink-0 bg-border-strong" aria-hidden="true"></span><span>{h}</span></li>
+          ))}
+        </ul>
+      </li>
+    ))}
+  </ol>
+</section>

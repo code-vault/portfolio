@@ -1,7 +1,21 @@
 ---
-// TODO (step 4): replaced by the real Experience page (timeline + skills).
+// Experience page: heading, the 4-step path strip, the role timeline, then skills grouped by layer.
+// Everything comes from src/content/ (site.json, experience/, skills.json).
+import { getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import CareerPath from '../../components/CareerPath.astro';
+import Timeline from '../../components/Timeline.astro';
+import SkillsByLayer from '../../components/SkillsByLayer.astro';
+
+const site = (await getEntry('site', 'site'))!.data;
+const head = site.sections.experience;
 ---
-<BaseLayout title="Experience · Devarshi Ojha">
-  <section class="mx-auto max-w-6xl px-6 py-24"><h1 class="text-5xl font-bold tracking-tight">Experience</h1></section>
+<BaseLayout page="experience">
+  <section aria-labelledby="experience-title" class="mx-auto max-w-6xl px-6 pb-14 pt-16 sm:pb-20 sm:pt-24">
+    <SectionHeading as="h1" id="experience-title" label={head.label} heading={head.heading} />
+  </section>
+  <CareerPath label={head.pathLabel} steps={site.path} />
+  <Timeline label={head.rolesLabel} />
+  <SkillsByLayer heading={head.skillsHeading} />
 </BaseLayout>

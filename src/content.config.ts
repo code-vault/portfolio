@@ -115,7 +115,7 @@ const site = defineCollection({
       about: sectionHead.extend({ text: nonEmpty }),
       contact: sectionHead.extend({ text: nonEmpty }),
       projects: sectionHead.extend({ intro: nonEmpty, sideLabel: nonEmpty }),
-      experience: sectionHead.extend({ pathLabel: nonEmpty, skillsHeading: nonEmpty }),
+      experience: sectionHead.extend({ pathLabel: nonEmpty, rolesLabel: nonEmpty, skillsHeading: nonEmpty }),
     }),
     // The 4-step "path" strip on the Experience page
     path: z.array(z.object({ year: nonEmpty, label: nonEmpty })).min(2),

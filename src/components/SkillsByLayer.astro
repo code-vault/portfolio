@@ -1,0 +1,23 @@
+---
+// Skills grouped by layer (skills.json): one white card per layer with monospace chips.
+import { getCollection } from 'astro:content';
+import TagList from './TagList.astro';
+
+interface Props { heading: string }
+const { heading } = Astro.props;
+
+const groups = (await getCollection('skills')).sort((a, b) => Number(a.id) - Number(b.id));
+---
+<section aria-labelledby="skills-title" class="mx-auto max-w-6xl px-6 pb-20 sm:pb-28">
+  <h2 id="skills-title" class="label mb-8">{heading}</h2>
+  <ul class="grid gap-5 md:grid-cols-2">
+    {groups.map(({ data }, i) => (
+      <li data-reveal data-reveal-delay={(i % 2) * 0.08}>
+        <section class="card h-full p-6" aria-labelledby={`skills-${i}`}>
+          <h3 id={`skills-${i}`} class="mb-4 text-lg font-semibold text-text">{data.group}</h3>
+          <TagList tags={data.items} />
+        </section>
+      </li>
+    ))}
+  </ul>
+</section>

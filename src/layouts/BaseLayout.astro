@@ -21,7 +21,7 @@ const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO ste
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={site.metaDescription} />
-    <meta name="theme-color" content="#0b1016" />
+    <meta name="theme-color" content="#fafafa" />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
@@ -45,7 +45,7 @@ const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO ste
     <a href="#main" class="skip-link">Skip to content</a>
     {minimal ? (
       <header class="border-b border-border">
-        <div class="mx-auto flex max-w-5xl items-center px-6 py-4">
+        <div class="mx-auto flex max-w-6xl items-center px-6 py-4">
           <a href="/" class="font-semibold text-text">{site.name}</a>
         </div>
       </header>
@@ -55,10 +55,8 @@ const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO ste
     <main id="main">
       <slot />
     </main>
-    <footer class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-10 text-sm text-muted">
-      <span>© {new Date().getFullYear()} {site.name}</span>
-      <!-- About is not in the top nav (to keep it short), so it is linked from here -->
-      <a href="#about" class="inline-flex min-h-11 items-center rounded-md px-2 hover:text-text">About</a>
+    <footer class="mx-auto max-w-6xl px-6 py-10 text-sm text-muted">
+      © {new Date().getFullYear()} {site.name}
     </footer>
     <script>
       import '../scripts/main';

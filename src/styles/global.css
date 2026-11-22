@@ -1,40 +1,98 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter';
 
-/* Theme tokens. Change the accent colour here and it updates everywhere. */
+/* Theme tokens (light, editorial). Change a colour here and it updates everywhere.
+   Violet is the single accent and is used sparingly: one headline word, metric numbers,
+   small section labels and the active nav link.
+
+   Contrast note: the bright gradient (#7c3aed -> #a855f7) is only ever used for LARGE text.
+   Small text (labels, active nav) uses the darker --color-accent, which passes WCAG AA on white. */
 @theme {
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
-  --color-bg: #0b1016;        /* near-black slate */
-  --color-surface: #131b24;   /* cards */
-  --color-border: #243040;
-  --color-text: #e6edf3;
-  --color-muted: #9fb0c0;
-  --color-accent: #2dd4bf;    /* teal, the single accent colour */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --color-bg: #fafafa;          /* page background */
+  --color-surface: #ffffff;     /* cards */
+  --color-panel: #f5f5f5;       /* light-grey inner panels and chips (neutral-100) */
+  --color-border: #e5e5e5;      /* neutral-200 */
+  --color-border-strong: #d4d4d4; /* neutral-300, hover borders */
+  --color-text: #0a0a0a;        /* near-black: headings, primary buttons */
+  --color-muted: #525252;       /* neutral-600: body text */
+  --color-accent: #6d28d9;      /* dark violet: small text, active nav (passes AA) */
+  --color-violet: #7c3aed;      /* bright violet: large text and decorative use */
+  --color-violet-2: #a855f7;    /* gradient end */
 }
 
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
-body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }
+body {
+  background: var(--color-bg);
+  color: var(--color-muted);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
 
-/* Sticky nav is ~64px tall: keep anchored sections from hiding underneath it. */
-html { scroll-padding-top: 5rem; }
+/* Headings are near-black; body copy stays neutral-600. */
+h1, h2, h3, h4 { color: var(--color-text); }
+
+/* Sticky bar is ~68px tall: keep anchored sections from hiding underneath it. */
+html { scroll-padding-top: 5.5rem; }
 
 /* Visible keyboard focus everywhere, in the accent colour. */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-violet);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 /* Skip link: hidden until it receives keyboard focus. */
 .skip-link {
   position: absolute; left: 1rem; top: -4rem; z-index: 100;
-  background: var(--color-accent); color: var(--color-bg);
-  padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600;
+  background: var(--color-text); color: #fff;
+  padding: 0.5rem 1rem; border-radius: 9999px; font-weight: 600;
   transition: top 0.15s;
 }
 .skip-link:focus { top: 1rem; }
+
+/* ---------- Reusable pieces ----------
+   These live in Tailwind's "components" layer so utility classes (e.g. `hidden`, `md:inline-flex`)
+   can still override them. */
+@layer components {
+
+  /* Buttons: primary = black pill, secondary = white pill with a border. */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    min-height: 2.75rem; padding: 0.625rem 1.25rem;
+    border-radius: 9999px; font-weight: 600; font-size: 0.9375rem; line-height: 1;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .btn-primary { background: var(--color-text); color: #fff; border: 1px solid var(--color-text); }
+  .btn-primary:hover { background: #262626; }
+  .btn-secondary { background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border-strong); }
+  .btn-secondary:hover { border-color: var(--color-text); }
+
+  /* Small uppercase label in the accent colour (section labels, card sub-labels). */
+  .label {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  /* Violet gradient text. Large text only (see contrast note above). Falls back to solid violet. */
+  .gradient-text {
+    color: var(--color-violet);
+    background-image: linear-gradient(90deg, var(--color-violet), var(--color-violet-2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Cards: white, 1px neutral border, large radius. */
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 1.25rem;
+  }
+}
 
 /* Scroll-in animation start state. Only applies when JS is on (class "js" is set in BaseLayout)
    and the visitor has NOT asked for reduced motion. */
@@ -42,13 +100,13 @@ html { scroll-padding-top: 5rem; }
   .js [data-reveal]:not([data-revealed]) { opacity: 0; transform: translateY(1.5rem); }
 }
 
-/* Cards lift slightly on hover/focus-within (not for reduced motion). */
+/* Cards lift slightly on hover/focus-within, with a soft shadow (not for reduced motion). */
 .card-lift { transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
 @media (prefers-reduced-motion: no-preference) {
   .card-lift:hover, .card-lift:focus-within {
-    transform: translateY(-4px);
-    border-color: var(--color-accent);
-    box-shadow: 0 12px 30px -12px color-mix(in srgb, var(--color-accent) 35%, transparent);
+    transform: translateY(-3px);
+    border-color: var(--color-border-strong);
+    box-shadow: 0 18px 40px -18px rgba(10, 10, 10, 0.18);
   }
 }
 

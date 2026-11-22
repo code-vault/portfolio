@@ -1,12 +1,12 @@
 ---
-// Small pill-style tags (used by case studies and the experience timeline).
+// Small monospace chips (used by case studies, skills and the experience timeline).
 interface Props { tags: string[] }
 const { tags } = Astro.props;
 ---
 {tags.length > 0 && (
   <ul class="flex flex-wrap gap-2" aria-label="Technologies">
     {tags.map((tag) => (
-      <li class="rounded-full border border-border px-3 py-1 text-xs text-muted">{tag}</li>
+      <li class="chip">{tag}</li>
     ))}
   </ul>
 )}

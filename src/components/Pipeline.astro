@@ -1,86 +1,97 @@
 ---
-// Animated pipeline: a pulse travels along a line and each step lights up as it passes.
-// Steps come from site.json ("pipeline"). Any number of steps (2+) works.
-// Pure CSS animation, so it needs no JavaScript and is switched off for prefers-reduced-motion.
+// "END-TO-END PIPELINE" card: a vertical list of steps (from site.json "pipeline") joined by a dashed line,
+// with a subtle violet pulse travelling down it. Each step lights up as the pulse reaches it.
+// Pure CSS animation: no JavaScript, and switched off for prefers-reduced-motion.
 interface Props { steps: string[] }
 const { steps } = Astro.props;
+
+// One simple line icon per step (by position). If more steps are ever added, extra ones get a dot.
+// Paths use a 24x24 grid, drawn with stroke="currentColor".
+const icons = [
+  '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>', // document
+  '<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>', // sparkles
+  '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>', // layers
+  '<path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/>', // shield-check
+  '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>', // flag
+];
+const fallbackIcon = '<circle cx="12" cy="12" r="3"/>';
 ---
-<ol class="pipeline" style={`--n: ${steps.length}`} aria-label="Quality pipeline">
-  <!-- Decorative line + travelling pulse (hidden from screen readers) -->
-  <li class="pipeline-track" aria-hidden="true"><span class="pipeline-pulse"></span></li>
-  {steps.map((step, i) => (
-    <li class="pipeline-step" style={`--i: ${i}`}>
-      <span class="pipeline-dot" aria-hidden="true"></span>
-      <span class="pipeline-label">{step}</span>
-    </li>
-  ))}
-</ol>
+<div class="card p-6 md:p-8">
+  <div class="flex items-center justify-between gap-4">
+    <h2 class="label !text-muted">End-to-end pipeline</h2>
+    <!-- Small violet "live" dot (static, no green anywhere on the site) -->
+    <span class="inline-flex items-center gap-2 text-xs font-medium text-muted">
+      <span class="live-dot" aria-hidden="true"></span>live
+    </span>
+  </div>
+
+  <ol class="pipeline mt-6" style={`--n: ${steps.length}`} aria-label="Pipeline steps">
+    <!-- Decorative dashed line + travelling pulse (hidden from screen readers) -->
+    <li class="pipeline-track" aria-hidden="true"><span class="pipeline-pulse"></span></li>
+    {steps.map((step, i) => (
+      <li class="pipeline-step" style={`--i: ${i}`}>
+        <span class="pipeline-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icons[i] ?? fallbackIcon} />
+        </span>
+        <span class="pipeline-label">{step}</span>
+        <span class="pipeline-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+      </li>
+    ))}
+  </ol>
+</div>
 
 <style>
-  /* One cycle = 6s: the pulse crosses the line in the first 4.5s, then rests. */
+  /* One cycle = 6s: the pulse travels for the first 4.5s, then rests. */
   .pipeline {
     --cycle: 6s;
     --travel: 4.5s;
+    --row: 4rem;
+    --icon: 2.5rem;
     position: relative;
     display: grid;
     list-style: none;
-    margin: 0;
+    margin-left: 0;
     padding: 0;
-    /* Mobile first: vertical list, one fixed-height row per step */
-    grid-template-rows: repeat(var(--n), 4rem);
+    grid-template-rows: repeat(var(--n), var(--row));
   }
-  .pipeline-step {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    position: relative;
-  }
-  .pipeline-dot {
-    width: 1.5rem;
-    height: 1.5rem;
-    flex: none;
-    border-radius: 9999px;
-    background: var(--color-bg);
-    border: 2px solid var(--color-border);
-    animation: node-glow var(--cycle) linear infinite;
-    /* Light up when the pulse reaches this step */
+  .pipeline-step { display: flex; align-items: center; gap: 1rem; position: relative; }
+
+  .pipeline-icon {
+    width: var(--icon); height: var(--icon); flex: none;
+    display: grid; place-items: center;
+    border-radius: 0.75rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-muted);
+    animation: icon-glow var(--cycle) linear infinite;
+    /* Light up when the pulse reaches this step (rows are evenly spaced) */
     animation-delay: calc(var(--i) * var(--travel) / (var(--n) - 1));
   }
-  .pipeline-label { color: var(--color-text); font-weight: 500; }
+  .pipeline-label { flex: 1; color: var(--color-text); font-weight: 600; }
+  .pipeline-num { font-family: var(--font-mono); font-size: 0.75rem; color: #737373; }
 
-  /* The line runs from the centre of the first dot to the centre of the last */
+  /* Dashed line from the centre of the first icon to the centre of the last */
   .pipeline-track {
-    position: absolute;
-    background: var(--color-border);
-    left: 0.75rem; width: 2px;
-    top: 2rem; bottom: 2rem;
+    position: absolute; list-style: none;
+    left: calc(var(--icon) / 2); width: 0;
+    top: calc(var(--row) / 2); bottom: calc(var(--row) / 2);
+    border-left: 2px dashed var(--color-border-strong);
   }
   .pipeline-pulse {
-    position: absolute;
-    left: 50%; top: 0;
-    width: 0.75rem; height: 0.75rem;
-    margin: -0.375rem 0 0 -0.375rem;
+    position: absolute; left: -1px; top: 0;
+    width: 0.75rem; height: 0.75rem; margin: -0.375rem 0 0 -0.375rem;
     border-radius: 9999px;
-    background: var(--color-accent);
-    box-shadow: 0 0 14px 3px color-mix(in srgb, var(--color-accent) 70%, transparent);
+    background: var(--color-violet);
+    box-shadow: 0 0 0 4px rgb(124 58 237 / 0.18), 0 0 14px 2px rgb(124 58 237 / 0.45);
     animation: pulse-down var(--cycle) linear infinite;
   }
 
-  /* Wider screens: horizontal row, dot above label */
-  @media (min-width: 768px) {
-    .pipeline {
-      grid-template-rows: none;
-      grid-template-columns: repeat(var(--n), 1fr);
-    }
-    .pipeline-step { flex-direction: column; gap: 0.75rem; text-align: center; align-items: center; justify-content: flex-start; }
-    .pipeline-label { font-size: 0.875rem; line-height: 1.3; padding: 0 0.5rem; }
-    .pipeline-track {
-      /* inset by half a column so the line starts/ends at the first/last dot centres */
-      left: calc(50% / var(--n)); right: calc(50% / var(--n));
-      width: auto; height: 2px;
-      top: 0.75rem; bottom: auto;
-    }
-    .pipeline-pulse { left: 0; top: 50%; margin: -0.375rem 0 0 -0.375rem; animation-name: pulse-across; }
+  .live-dot {
+    width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: var(--color-violet);
+    box-shadow: 0 0 0 0 rgb(124 58 237 / 0.4);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .live-dot { animation: live-ping 2s ease-out infinite; }
   }
 
   @keyframes pulse-down {
@@ -88,19 +99,18 @@ const { steps } = Astro.props;
     75% { top: 100%; opacity: 1; }   /* 75% of 6s = 4.5s */
     76%, 100% { top: 100%; opacity: 0; }
   }
-  @keyframes pulse-across {
-    0% { left: 0; opacity: 1; }
-    75% { left: 100%; opacity: 1; }
-    76%, 100% { left: 100%; opacity: 0; }
+  @keyframes icon-glow {
+    0% { border-color: var(--color-violet); color: var(--color-violet); background: #f5f3ff; box-shadow: 0 0 0 4px rgb(124 58 237 / 0.12); }
+    10%, 100% { border-color: var(--color-border-strong); color: var(--color-muted); background: var(--color-surface); box-shadow: none; }
   }
-  @keyframes node-glow {
-    0% { border-color: var(--color-accent); box-shadow: 0 0 12px var(--color-accent); background: var(--color-accent); }
-    10%, 100% { border-color: var(--color-border); box-shadow: none; background: var(--color-bg); }
+  @keyframes live-ping {
+    0% { box-shadow: 0 0 0 0 rgb(124 58 237 / 0.4); }
+    70%, 100% { box-shadow: 0 0 0 7px rgb(124 58 237 / 0); }
   }
 
   /* Respect the visitor's reduced-motion setting: static pipeline, no pulse */
   @media (prefers-reduced-motion: reduce) {
     .pipeline-pulse { display: none; }
-    .pipeline-dot { animation: none; border-color: var(--color-accent); }
+    .pipeline-icon { animation: none; }
   }
 </style>

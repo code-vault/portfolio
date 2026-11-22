@@ -90,6 +90,10 @@ const site = defineCollection({
     name: z.string().min(1),
     headline: z.string().min(1),
     oneLiner: z.string().min(1),
+    heroBadge: z.string().min(1), // small pill above the headline
+    // Headline is split so the second part can be shown in the violet gradient.
+    heroHeadline: z.object({ lead: z.string().min(1), highlight: z.string().min(1) }),
+    heroTools: z.array(z.string().min(1)).min(1), // the "Working with" chips
     metaTitle: z.string().min(1),
     metaDescription: z.string().min(1),
     pipeline: z.array(z.string().min(1)).min(2), // hero animation steps

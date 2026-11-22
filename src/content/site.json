@@ -2,6 +2,18 @@
   "name": "Devarshi Ojha",
   "headline": "Lead SDET · AI Quality & GenAI Evaluation",
   "oneLiner": "I build the test systems that let teams ship AI and web products with confidence, from Playwright frameworks to evaluation gates for LLM pipelines.",
+  "heroBadge": "Lead SDET · AI Quality",
+  "heroHeadline": {
+    "lead": "Quality for AI,",
+    "highlight": "proven."
+  },
+  "heroTools": [
+    "Playwright",
+    "TypeScript",
+    "REST Assured",
+    "DeepEval",
+    "Arize"
+  ],
   "metaTitle": "Devarshi Ojha · Lead SDET, AI Quality & GenAI Evaluation",
   "metaDescription": "Lead SDET with 9+ years in test automation, AI evaluation and agentic QA: Playwright, API and NFR testing, CI quality gates.",
   "pipeline": [

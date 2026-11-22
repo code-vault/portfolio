@@ -78,6 +78,14 @@ html { scroll-padding-top: 5.5rem; }
     color: var(--color-accent);
   }
 
+  /* Small monospace chip (tools, tags, diagram steps): neutral-100 background. */
+  .chip {
+    display: inline-block;
+    font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.25rem;
+    padding: 0.125rem 0.625rem; border-radius: 0.5rem;
+    background: var(--color-panel); color: #404040;
+  }
+
   /* Violet gradient text. Large text only (see contrast note above). Falls back to solid violet. */
   .gradient-text {
     color: var(--color-violet);

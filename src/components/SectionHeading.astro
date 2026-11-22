@@ -1,8 +1,11 @@
 ---
-// Shared heading for every page section, so they all look the same.
-interface Props { title: string; id?: string }
-const { title, id } = Astro.props;
+// Top of every section: a small uppercase violet label, a large heading and an optional intro line.
+// Text comes from site.json (sections.*).
+interface Props { label: string; heading: string; intro?: string; id: string }
+const { label, heading, intro, id } = Astro.props;
 ---
-<h2 id={id} class="mb-10 text-3xl font-bold tracking-tight sm:text-4xl">
-  <span class="text-accent" aria-hidden="true">/</span> {title}
-</h2>
+<div class="mb-10 max-w-3xl sm:mb-14">
+  <p class="label">{label}</p>
+  <h2 id={id} class="mt-3 text-3xl font-bold tracking-tight text-text sm:text-5xl" style="letter-spacing: -0.03em;">{heading}</h2>
+  {intro && <p class="mt-4 text-lg leading-relaxed text-muted">{intro}</p>}
+</div>

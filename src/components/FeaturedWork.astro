@@ -1,0 +1,23 @@
+---
+// Home page "Selected work": the projects marked `featured: true`, then a link to all projects.
+import { getCollection } from 'astro:content';
+import { getEntry } from 'astro:content';
+import SectionHeading from './SectionHeading.astro';
+import CaseStudyCard from './CaseStudyCard.astro';
+
+const site = (await getEntry('site', 'site'))!.data;
+const head = site.sections.selectedWork;
+
+const featured = (await getCollection('projects'))
+  .filter((p) => p.data.featured && !p.data.side)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+<section id="work" aria-labelledby="work-title" class="mx-auto max-w-6xl px-6 py-20 sm:py-28">
+  <SectionHeading id="work-title" label={head.label} heading={head.heading} />
+  <ul class="space-y-8">
+    {featured.map((project) => <CaseStudyCard project={project} />)}
+  </ul>
+  <p class="mt-10">
+    <a href="/projects/" class="inline-flex min-h-11 items-center font-semibold text-text hover:text-accent">{head.seeAll}</a>
+  </p>
+</section>

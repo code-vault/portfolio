@@ -1,11 +1,12 @@
 ---
-// About: one paragraph, from site.json.
+// About: label, heading and one paragraph, all from site.json (sections.about).
 import { getEntry } from 'astro:content';
 import SectionHeading from './SectionHeading.astro';
 
 const site = (await getEntry('site', 'site'))!.data;
+const about = site.sections.about;
 ---
-<section id="about" aria-labelledby="about-title" class="mx-auto max-w-5xl px-6 py-20">
-  <SectionHeading id="about-title" title="About" />
-  <p data-reveal class="max-w-3xl text-lg leading-relaxed text-muted sm:text-xl">{site.sections.about.text}</p>
+<section id="about" aria-labelledby="about-title" class="mx-auto max-w-6xl px-6 py-20 sm:py-28">
+  <SectionHeading id="about-title" label={about.label} heading={about.heading} />
+  <p data-reveal class="max-w-3xl text-xl leading-relaxed text-muted sm:text-2xl sm:leading-relaxed">{about.text}</p>
 </section>

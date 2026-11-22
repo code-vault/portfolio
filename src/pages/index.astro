@@ -1,20 +1,16 @@
 ---
-// The page only assembles sections. Content comes from src/content/.
+// Home page: only assembles sections. All copy comes from src/content/.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
-import Work from '../components/Work.astro';
+import FeaturedWork from '../components/FeaturedWork.astro';
 import Capabilities from '../components/Capabilities.astro';
-import Experience from '../components/Experience.astro';
-import Skills from '../components/Skills.astro';
 import About from '../components/About.astro';
 import Contact from '../components/Contact.astro';
 ---
-<BaseLayout>
+<BaseLayout page="home">
   <Hero />
-  <Work />
+  <FeaturedWork />
   <Capabilities />
-  <Experience />
-  <Skills />
   <About />
   <Contact />
 </BaseLayout>

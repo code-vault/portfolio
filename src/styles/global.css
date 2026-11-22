@@ -33,8 +33,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Headings are near-black; body copy stays neutral-600. */
-h1, h2, h3, h4 { color: var(--color-text); }
+/* Headings are near-black; body copy stays neutral-600.
+   In the base layer so classes like .label (violet) can override it. */
+@layer base {
+  h1, h2, h3, h4 { color: var(--color-text); }
+}
 
 /* Sticky bar is ~68px tall: keep anchored sections from hiding underneath it. */
 html { scroll-padding-top: 5.5rem; }

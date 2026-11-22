@@ -105,7 +105,7 @@ const site = defineCollection({
     // The "How I test" card on the Home page
     howITest: z.object({
       title: nonEmpty,
-      rows: z.array(z.object({ layer: nonEmpty, line: nonEmpty, tag: nonEmpty.optional() })).min(1),
+      rows: z.array(z.object({ layer: nonEmpty, line: nonEmpty })).min(1),
       footer: nonEmpty, // monospace line at the bottom of the card
     }),
     pages: z.object({ home: pageMeta, projects: pageMeta, experience: pageMeta }),

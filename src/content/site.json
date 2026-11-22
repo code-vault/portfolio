@@ -6,7 +6,7 @@
     "accent": "boring",
     "after": ", in the best way."
   },
-  "intro": "I'm Devarshi Ojha, a Lead SDET. I design the test architecture that lets teams ship web, mobile and API products without holding their breath, and lately the AI inside them too.",
+  "intro": "I'm Devarshi Ojha, a Lead SDET. I design the test architecture behind web, mobile and API products, and the AI systems shipping alongside them: frameworks for what's predictable, evaluation for what isn't.",
   "previouslyAt": [
     "KlearNow.AI",
     "Avis Budget Group (via StatusNeo)",
@@ -29,8 +29,7 @@
       },
       {
         "layer": "AI & agents",
-        "line": "Evaluation gates for models, agents in the test loop",
-        "tag": "Now"
+        "line": "Evaluation gates for models, agents in the test loop"
       }
     ],
     "footer": "✓ ui  ✓ mobile  ✓ api  ✓ ai"
@@ -38,7 +37,7 @@
   "pages": {
     "home": {
       "title": "Devarshi Ojha · Lead SDET",
-      "description": "Lead SDET designing test architecture for web, mobile and API products, and the AI inside them."
+      "description": "Lead SDET designing test architecture for web, mobile and API products and the AI systems shipping alongside them."
     },
     "projects": {
       "title": "Projects · Devarshi Ojha",
@@ -46,7 +45,7 @@
     },
     "experience": {
       "title": "Experience · Devarshi Ojha",
-      "description": "Nine years of test architecture and QA leadership, from web automation to AI evaluation."
+      "description": "Nine years of test architecture and QA leadership across web, mobile, APIs and AI systems."
     }
   },
   "sections": {
@@ -62,7 +61,7 @@
     "about": {
       "label": "About",
       "heading": "A bit about me.",
-      "text": "I started in 2016 with Selenium and one belief: a good test is one nobody has to babysit. Since then I've designed testing for mobile apps, content platforms, a mainframe-to-cloud migration and a GenAI document platform. The systems got bigger and stranger; the goal stayed the same, releases nobody has to worry about. AI is the newest layer and the most interesting one, because \"correct\" becomes something you measure rather than assert."
+      "text": "I started in 2016 with Selenium and one belief: a good test is one nobody has to babysit. Since then I've designed testing for mobile apps, content platforms, a mainframe-to-cloud migration and a GenAI document platform. The systems got bigger and stranger; the goal stayed the same, releases nobody has to worry about. Today that spans two kinds of software: the predictable kind, and AI, where \"correct\" is something you measure rather than assert. I design testing for both."
     },
     "contact": {
       "label": "Contact",

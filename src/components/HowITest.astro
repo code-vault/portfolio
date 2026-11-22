@@ -1,8 +1,8 @@
 ---
-// "HOW I TEST" card: four stacked rows (layer + one proof line), a small "Now" pill on the newest layer,
+// "HOW I TEST" card: four stacked rows (layer + one proof line, all with equal visual weight)
 // and a monospace footer line. All text comes from site.json (howITest). No looping animation:
 // each row only gets a subtle background on hover.
-interface Row { layer: string; line: string; tag?: string }
+interface Row { layer: string; line: string }
 interface Props { title: string; rows: Row[]; footer: string }
 const { title, rows, footer } = Astro.props;
 
@@ -14,11 +14,8 @@ const footerParts = footer.split(/(✓)/);
 
   <ul>
     {rows.map((row) => (
-      <li class="how-row grid gap-1 rounded-xl px-3 py-4 sm:grid-cols-[11rem_1fr] sm:items-baseline sm:gap-4">
-        <span class="flex items-center gap-2 whitespace-nowrap font-semibold text-text">
-          {row.layer}
-          {row.tag && <span class="now-pill">{row.tag}</span>}
-        </span>
+      <li class="how-row grid gap-1 rounded-xl px-3 py-4 sm:grid-cols-[7.5rem_1fr] sm:items-baseline sm:gap-4">
+        <span class="whitespace-nowrap font-semibold text-text">{row.layer}</span>
         <span class="leading-snug text-muted">{row.line}</span>
       </li>
     ))}
@@ -35,10 +32,4 @@ const footerParts = footer.split(/(✓)/);
   .how-row { transition: background-color 0.15s; }
   .how-row:hover { background: var(--color-panel); }
 
-  /* Small "Now" pill: light violet tint, dark violet text */
-  .now-pill {
-    font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.04em; line-height: 1;
-    padding: 0.25rem 0.5rem; border-radius: 9999px;
-    background: #f5f3ff; color: var(--color-accent); border: 1px solid #ddd6fe;
-  }
 </style>

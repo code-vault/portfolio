@@ -2,56 +2,61 @@ import { test, expect } from '@playwright/test';
 import { scrollThroughPage } from './helpers';
 
 test.describe('normal motion', () => {
-  test('hero pipeline animates', async ({ page }) => {
-    await page.goto('/');
-    const pulse = page.locator('.pipeline-pulse');
-    await expect(pulse).toBeVisible();
-    expect(await pulse.evaluate((el) => getComputedStyle(el).animationName)).not.toBe('none');
+  test('cards reveal on scroll and are not collapsed (Home and Projects)', async ({ page }) => {
+    for (const path of ['/', '/projects/', '/experience/']) {
+      await page.goto(path);
+      await scrollThroughPage(page);
+      const broken = await page.evaluate(() =>
+        [...document.querySelectorAll('[data-reveal]')].filter((el) => {
+          const box = el.getBoundingClientRect();
+          return getComputedStyle(el).opacity !== '1' || box.width === 0 || box.height === 0;
+        }).length,
+      );
+      expect(broken, `${path}: unrevealed or collapsed elements`).toBe(0);
+    }
   });
 
-  test('stats count up and end on the exact values', async ({ page }) => {
+  test('the hero fades in once, and nothing on Home loops forever', async ({ page }) => {
     await page.goto('/');
-    await page.locator('#stats').scrollIntoViewIfNeeded();
-    await scrollThroughPage(page);
-    const values = await page.locator('[data-count]').allTextContents();
-    expect(values).toEqual(['9+', '8h → 3h', '~500', '5–6h → ~3h', '16', '20+']);
-  });
-
-  test('cards reveal on scroll and are not collapsed', async ({ page }) => {
-    await page.goto('/');
-    await scrollThroughPage(page);
-    const broken = await page.evaluate(() =>
-      [...document.querySelectorAll('[data-reveal]')].filter((el) => {
-        const box = el.getBoundingClientRect();
-        return getComputedStyle(el).opacity !== '1' || box.width === 0 || box.height === 0;
-      }).length,
+    expect(await page.locator('.hero-in').first().evaluate((el) => getComputedStyle(el).animationName)).toBe('hero-in');
+    await page.waitForTimeout(1500);
+    const looping = await page.evaluate(
+      () => document.getAnimations().filter((a) => (a.effect as KeyframeEffect).getComputedTiming().iterations === Infinity).length,
     );
-    expect(broken).toBe(0);
+    expect(looping, 'infinite animations').toBe(0);
+  });
+
+  test('cards lift on hover', async ({ page }) => {
+    await page.goto('/');
+    const card = page.locator('#what-i-bring .card-lift').first();
+    await card.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1200); // let the scroll-in finish
+    await card.hover();
+    await page.waitForTimeout(400);
+    expect(await card.evaluate((el) => getComputedStyle(el).transform)).not.toBe('none');
   });
 });
 
 test.describe('prefers-reduced-motion: reduce', () => {
   test.use({ reducedMotion: 'reduce' });
 
-  test('pipeline animation is off', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.locator('.pipeline-pulse')).toBeHidden();
-    expect(await page.locator('.pipeline-dot').first().evaluate((el) => getComputedStyle(el).animationName)).toBe('none');
-  });
-
-  test('content is visible immediately with final stat values, and scrolling is not smooth', async ({ page }) => {
+  test('content is visible immediately and the hero does not animate', async ({ page }) => {
     await page.goto('/');
     const hidden = await page.evaluate(
       () => [...document.querySelectorAll('[data-reveal]')].filter((el) => getComputedStyle(el).opacity === '0').length,
     );
     expect(hidden).toBe(0);
-    await expect(page.locator('[data-count]').first()).toHaveText('9+');
+    expect(await page.locator('.hero-in').first().evaluate((el) => getComputedStyle(el).animationName)).toBe('none');
+  });
+
+  test('smooth scrolling is off', async ({ page }) => {
+    await page.goto('/');
     expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe('auto');
   });
 
   test('cards do not lift on hover', async ({ page }) => {
     await page.goto('/');
-    const card = page.locator('#what-i-do .card-lift').first();
+    const card = page.locator('#what-i-bring .card-lift').first();
     await card.scrollIntoViewIfNeeded();
     await card.hover();
     await page.waitForTimeout(400);

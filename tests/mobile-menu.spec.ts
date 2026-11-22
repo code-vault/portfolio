@@ -2,7 +2,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-const LINKS = ['Work', 'What I do', 'Experience', 'Skills', 'Contact'];
+const LINKS = ['Home', 'Projects', 'Experience', 'Get in touch'];
 
 const menuButton = (page: Page) => page.getByRole('button', { name: 'Menu' });
 const menu = (page: Page) => page.locator('#mobile-menu');
@@ -27,7 +27,8 @@ test.describe('mobile (375px)', () => {
     await expect(menuButton(page)).toHaveAttribute('aria-controls', 'mobile-menu');
     await expect(menu(page)).toBeHidden();
     // The desktop link list must not be visible at this width
-    await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Work' })).toBeHidden();
+    await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Projects' })).toBeHidden();
+    await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Get in touch' })).toBeHidden();
   });
 
   test('opens: aria-expanded true, menu visible with all links, focus moves into the menu', async ({ page }) => {
@@ -36,14 +37,14 @@ test.describe('mobile (375px)', () => {
     await expect(menu(page)).toBeVisible();
     const labels = await menu(page).getByRole('link').allTextContents();
     expect(labels).toEqual(LINKS);
-    expect(await focused(page)).toBe('Work'); // first link
+    expect(await focused(page)).toBe('Home'); // first link
   });
 
   test('opens from the keyboard (Enter on the button)', async ({ page }) => {
     await menuButton(page).focus();
     await page.keyboard.press('Enter');
     await expect(menu(page)).toBeVisible();
-    expect(await focused(page)).toBe('Work');
+    expect(await focused(page)).toBe('Home');
   });
 
   test('closes on Esc and returns focus to the menu button', async ({ page }) => {
@@ -61,37 +62,55 @@ test.describe('mobile (375px)', () => {
     await expect(menuButton(page)).toBeFocused();
   });
 
-  for (const label of LINKS) {
-    test(`tapping "${label}" closes the menu and scrolls to that section`, async ({ page }) => {
+  test('the current page is marked in the menu', async ({ page }) => {
+    await menuButton(page).click();
+    await expect(menu(page).locator('[aria-current="page"]')).toHaveText('Home');
+  });
+
+  // Tapping a page link closes the menu and goes to that page (the new page loads with the menu closed).
+  for (const [label, url] of [['Projects', /\/projects\/$/], ['Experience', /\/experience\/$/]] as const) {
+    test(`tapping "${label}" closes the menu and opens that page`, async ({ page }) => {
       await menuButton(page).click();
       await menu(page).getByRole('link', { name: label, exact: true }).click();
-
+      await expect(page).toHaveURL(url);
       await expect(menu(page)).toBeHidden();
       await expect(menuButton(page)).toHaveAttribute('aria-expanded', 'false');
-
-      const id = { Work: 'work', 'What I do': 'what-i-do', Experience: 'experience', Skills: 'skills', Contact: 'contact' }[label]!;
-      await expect(page).toHaveURL(new RegExp(`#${id}$`));
-      await expect(page.locator(`#${id}`)).toBeInViewport({ timeout: 8000 });
-      // scrolling is unlocked again
       expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe('hidden');
     });
   }
 
+  test('tapping "Get in touch" closes the menu and scrolls to the contact section', async ({ page }) => {
+    await menuButton(page).click();
+    await menu(page).getByRole('link', { name: 'Get in touch', exact: true }).click();
+    await expect(menu(page)).toBeHidden();
+    await expect(menuButton(page)).toHaveAttribute('aria-expanded', 'false');
+    await expect(page).toHaveURL(/#contact$/);
+    await expect(page.locator('#contact')).toBeInViewport({ timeout: 8000 });
+    // scrolling is unlocked again
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe('hidden');
+  });
+
+  test('tapping the link for the page you are already on closes the menu', async ({ page }) => {
+    await menuButton(page).click();
+    await menu(page).getByRole('link', { name: 'Home', exact: true }).click();
+    await expect(menu(page)).toBeHidden();
+  });
+
   test('focus is trapped: Tab and Shift+Tab wrap around inside the menu', async ({ page }) => {
-    await menuButton(page).click(); // focus on "Work"
+    await menuButton(page).click(); // focus on "Home"
     const seen: string[] = [await focused(page)];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
       await page.keyboard.press('Tab');
       seen.push(await focused(page));
     }
-    // Work -> What I do -> Experience -> Skills -> Contact -> (wraps) menu button -> Work
-    expect(seen).toEqual(['Work', 'What I do', 'Experience', 'Skills', 'Contact', 'menu button', 'Work']);
+    // Home -> Projects -> Experience -> Get in touch -> (wraps) menu button -> Home
+    expect(seen).toEqual(['Home', 'Projects', 'Experience', 'Get in touch', 'menu button', 'Home']);
 
     // Backwards from the first link goes to the button, and from the button wraps to the last link
     await page.keyboard.press('Shift+Tab');
     expect(await focused(page)).toBe('menu button');
     await page.keyboard.press('Shift+Tab');
-    expect(await focused(page)).toBe('Contact');
+    expect(await focused(page)).toBe('Get in touch');
   });
 
   test('the page behind is inert and does not scroll while the menu is open', async ({ page }) => {
@@ -141,8 +160,13 @@ test.describe('mobile (375px)', () => {
   test('closes by itself if the screen becomes wide while open', async ({ page }) => {
     await menuButton(page).click();
     await page.setViewportSize({ width: 1280, height: 800 });
+    // CSS hides the overlay at once; the script's own clean-up (state + scroll lock) follows on the
+    // media-query change event, so wait for it instead of reading the scroll lock too early.
+    // (The button itself is display:none on desktop, so getByRole can't see it: use a plain CSS locator.)
+    await expect(page.locator('[data-menu-button]')).toHaveAttribute('aria-expanded', 'false');
     await expect(menu(page)).toBeHidden();
-    expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe('hidden');
+    await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe('hidden');
+    expect(await page.evaluate(() => (document.querySelector('main') as HTMLElement).inert)).toBe(false);
   });
 
   test('axe: no accessibility violations with the menu open', async ({ page }) => {

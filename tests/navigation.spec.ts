@@ -1,37 +1,63 @@
-import { test, expect } from '@playwright/test';
-import { SECTIONS } from './helpers';
+import { test, expect, type Page } from '@playwright/test';
+import { NAV_LINKS, PAGES } from './helpers';
 
-const nav = (page: import('@playwright/test').Page) => page.getByRole('navigation', { name: 'Main' });
+const nav = (page: Page) => page.getByRole('navigation', { name: 'Main' });
 
-for (const { label, id } of SECTIONS) {
-  test(`nav link "${label}" scrolls to #${id} and becomes the active link`, async ({ page }) => {
-    await page.goto('/');
+test('desktop nav has Home, Projects and Experience in order, plus a "Get in touch" button', async ({ page }) => {
+  await page.goto('/');
+  const labels = await nav(page).locator('[data-nav-links]').getByRole('link').allTextContents();
+  expect(labels).toEqual(['Home', 'Projects', 'Experience']);
+  await expect(nav(page).getByRole('link', { name: 'Get in touch' })).toBeVisible();
+});
+
+for (const { label, path } of NAV_LINKS) {
+  test(`nav link "${label}" goes to ${path} and is marked as the current page`, async ({ page }) => {
+    await page.goto(label === 'Home' ? '/projects/' : '/');
     await nav(page).getByRole('link', { name: label, exact: true }).click();
-
-    await expect(page).toHaveURL(new RegExp(`#${id}$`));
-    // Smooth scrolling takes a moment. Done = the section's top sits just under the sticky nav,
-    // OR the page can't scroll any further (the last section, Contact, is shorter than the screen).
-    await expect
-      .poll(
-        () =>
-          page.evaluate((sectionId) => {
-            const top = document.getElementById(sectionId)!.getBoundingClientRect().top;
-            const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
-            return top < 140 || atBottom;
-          }, id),
-        { timeout: 8000 },
-      )
-      .toBe(true);
-    await expect(page.locator(`#${id}`)).toBeInViewport();
-
-    await expect(nav(page).locator('[aria-current="location"]')).toHaveText(label);
+    await expect(page).toHaveURL(new RegExp(`${path === '/' ? '/$' : path.replace(/\//g, '\\/') + '$'}`));
+    await expect(nav(page).locator('[aria-current="page"]')).toHaveText(label);
+    await expect(nav(page).locator('[aria-current="page"]')).toHaveCount(1);
   });
 }
 
-test('"View my work" scrolls to the case studies', async ({ page }) => {
+for (const { name, path } of PAGES) {
+  test(`on the ${name} page, only its own nav link is marked current`, async ({ page }) => {
+    await page.goto(path);
+    const expected = NAV_LINKS.find((l) => l.path === path)!.label;
+    await expect(nav(page).locator('[aria-current="page"]')).toHaveText(expected);
+  });
+}
+
+test('"Get in touch" scrolls to the contact section on Home', async ({ page }) => {
+  await page.goto('/');
+  await nav(page).getByRole('link', { name: 'Get in touch' }).click();
+  await expect(page).toHaveURL(/\/#contact$/);
+  await expect(page.locator('#contact')).toBeInViewport({ timeout: 8000 });
+});
+
+test('"Get in touch" from another page lands on the contact section', async ({ page }) => {
+  await page.goto('/experience/');
+  await nav(page).getByRole('link', { name: 'Get in touch' }).click();
+  await expect(page).toHaveURL(/\/#contact$/);
+  await expect(page.locator('#contact')).toBeInViewport({ timeout: 8000 });
+});
+
+test('"View my work" goes to the Projects page', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: 'View my work' }).click();
-  await expect(page.locator('#work')).toBeInViewport();
+  await expect(page).toHaveURL(/\/projects\/$/);
+});
+
+test('"See all projects →" goes to the Projects page', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'See all projects →' }).click();
+  await expect(page).toHaveURL(/\/projects\/$/);
+});
+
+test('brand link returns Home', async ({ page }) => {
+  await page.goto('/projects/');
+  await nav(page).getByRole('link', { name: 'Devarshi Ojha' }).click();
+  await expect(page).toHaveURL(/\/$/);
 });
 
 test('skip link is the first thing keyboard users reach and it jumps to main content', async ({ page }) => {
@@ -42,19 +68,4 @@ test('skip link is the first thing keyboard users reach and it jumps to main con
   await expect(skip).toBeInViewport();
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#main$/);
-});
-
-test('desktop nav has exactly 5 links, in order, and no About', async ({ page }) => {
-  await page.goto('/');
-  const labels = await nav(page).locator('[data-nav-links]').first().getByRole('link').allTextContents();
-  expect(labels).toEqual(['Work', 'What I do', 'Experience', 'Skills', 'Contact']);
-});
-
-test('footer "About" link scrolls to the About section, and no nav link is highlighted there', async ({ page }) => {
-  await page.goto('/');
-  await page.getByRole('contentinfo').getByRole('link', { name: 'About' }).click();
-  await expect(page).toHaveURL(/#about$/);
-  await expect(page.locator('#about')).toBeInViewport();
-  // About has no nav link, so the previous highlight must be cleared (not left on e.g. "Skills")
-  await expect(nav(page).locator('[aria-current="location"]')).toHaveCount(0, { timeout: 8000 });
 });

@@ -29,7 +29,7 @@ function wrap(text, maxChars) {
   return lines;
 }
 
-const headlineLines = wrap(site.headline, 22);
+const headlineLines = wrap(site.badge, 22);
 const headlineSvg = headlineLines
   .map((l, i) => `<text x="100" y="${360 + i * 64}" font-size="52" font-weight="600" fill="${ACCENT}">${esc(l)}</text>`)
   .join('\n  ');

@@ -17,29 +17,37 @@ const listParser = (text: string) =>
   (JSON.parse(text) as object[]).map((entry, i) => ({ id: String(i), ...entry }));
 const objectParser = (text: string) => ({ site: JSON.parse(text) });
 
+const nonEmpty = z.string().min(1);
+
 // ---------- projects/*.md (case studies and the side project) ----------
 
-// A full case study needs problem, solution, impact and diagram.
+// A full case study needs company, period, problem, solution, metrics and diagram.
 // A side project (side: true) only needs a title, a short description and a link,
-// so we never have to invent a problem/solution/impact for it.
+// so we never have to invent a problem/solution/metrics for it.
 const projects = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/projects' }),
   schema: z
     .object({
-      title: z.string().min(1),
-      order: z.number().int(),
-      company: z.string().min(1),
+      title: nonEmpty,
+      order: z.number().int(), // sort order; also the "01", "02" number on the card
       side: z.boolean().default(false),
-      problem: z.string().min(1).optional(),
-      solution: z.string().min(1).optional(),
-      impact: z.array(z.string().min(1)).min(1).optional(),
-      tags: z.array(z.string().min(1)).default([]),
-      diagram: z.array(z.string().min(1)).min(2).optional(), // step labels, in order
-      description: z.string().min(1).optional(), // used by side projects only
+      featured: z.boolean().default(false), // shown on the Home page under "Selected work"
+      company: nonEmpty.optional(), // e.g. "KlearNow.AI"
+      period: nonEmpty.optional(), // e.g. "2026" or "2022–2025"
+      problem: nonEmpty.optional(),
+      solution: nonEmpty.optional(), // shown under the label "What I did"
+      also: nonEmpty.optional(), // optional extra one-liner under the metrics
+      // Up to 3 big numbers: { value: "8h → 3h", label: "full regression" }
+      metrics: z.array(z.object({ value: nonEmpty, label: nonEmpty })).min(1).max(3).optional(),
+      diagram: z.array(nonEmpty).min(2).optional(), // architecture step labels, in order
+      tags: z.array(nonEmpty).default([]),
+      description: nonEmpty.optional(), // side projects only
       link: z.url().optional(),
     })
     .superRefine((p, ctx) => {
-      const required = p.side ? ['description', 'link'] : ['problem', 'solution', 'impact', 'diagram'];
+      const required = p.side
+        ? ['description', 'link']
+        : ['company', 'period', 'problem', 'solution', 'metrics', 'diagram'];
       for (const key of required) {
         if (p[key as keyof typeof p] === undefined) {
           ctx.addIssue({
@@ -54,55 +62,68 @@ const projects = defineCollection({
 
 // ---------- experience/*.md (one file per role) ----------
 
+// Tags and location are kept as optional data but are not shown on the page.
 const experience = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/experience' }),
   schema: z.object({
-    company: z.string().min(1),
-    role: z.string().min(1),
+    company: nonEmpty,
+    role: nonEmpty.optional(), // the career break has no role title
     start: monthYear,
     end: monthYear,
-    location: z.string().optional(), // the career break has no location
-    highlights: z.array(z.string().min(1)).min(1),
-    tags: z.array(z.string().min(1)).default([]),
+    location: z.string().optional(),
+    highlights: z.array(nonEmpty).min(1),
+    tags: z.array(nonEmpty).default([]),
   }),
 });
 
 // ---------- JSON content ----------
 
-const stats = defineCollection({
-  loader: file('src/content/stats.json', { parser: listParser }),
-  schema: z.object({ value: z.string().min(1), label: z.string().min(1) }),
-});
-
 const skills = defineCollection({
   loader: file('src/content/skills.json', { parser: listParser }),
-  schema: z.object({ group: z.string().min(1), items: z.array(z.string().min(1)).min(1) }),
+  schema: z.object({ group: nonEmpty, items: z.array(nonEmpty).min(1) }),
 });
 
 const capabilities = defineCollection({
   loader: file('src/content/capabilities.json', { parser: listParser }),
-  schema: z.object({ title: z.string().min(1), description: z.string().min(1) }),
+  schema: z.object({ title: nonEmpty, description: nonEmpty }),
 });
+
+// Title + description for one page's <title> and meta description.
+const pageMeta = z.object({ title: nonEmpty, description: nonEmpty });
+// Small uppercase label + big heading used at the top of a section.
+const sectionHead = z.object({ label: nonEmpty, heading: nonEmpty });
 
 const site = defineCollection({
   loader: file('src/content/site.json', { parser: objectParser }),
   schema: z.object({
-    name: z.string().min(1),
-    headline: z.string().min(1),
-    oneLiner: z.string().min(1),
-    heroBadge: z.string().min(1), // small pill above the headline
-    // Headline is split so the second part can be shown in the violet gradient.
-    heroHeadline: z.object({ lead: z.string().min(1), highlight: z.string().min(1) }),
-    heroTools: z.array(z.string().min(1)).min(1), // the "Working with" chips
-    metaTitle: z.string().min(1),
-    metaDescription: z.string().min(1),
-    pipeline: z.array(z.string().min(1)).min(2), // hero animation steps
-    about: z.string().min(1),
-    contactIntro: z.string().min(1),
+    name: nonEmpty,
+    badge: nonEmpty, // pill above the hero headline (also used on the OG image)
+    // The headline is split so the middle part can be shown in the accent colour.
+    heroHeadline: z.object({ before: z.string(), accent: nonEmpty, after: z.string() }),
+    intro: nonEmpty,
+    previouslyAt: z.array(nonEmpty).min(1), // plain grey company names under the hero buttons
+    // The "How I test" card on the Home page
+    howITest: z.object({
+      title: nonEmpty,
+      rows: z.array(z.object({ layer: nonEmpty, line: nonEmpty, tag: nonEmpty.optional() })).min(1),
+      footer: nonEmpty, // monospace line at the bottom of the card
+    }),
+    pages: z.object({ home: pageMeta, projects: pageMeta, experience: pageMeta }),
+    sections: z.object({
+      selectedWork: sectionHead.extend({ seeAll: nonEmpty }),
+      whatIBring: sectionHead,
+      about: sectionHead.extend({ text: nonEmpty }),
+      contact: sectionHead.extend({ text: nonEmpty }),
+      projects: sectionHead.extend({ intro: nonEmpty, sideLabel: nonEmpty }),
+      experience: sectionHead.extend({ pathLabel: nonEmpty, skillsHeading: nonEmpty }),
+    }),
+    // The 4-step "path" strip on the Experience page
+    path: z.array(z.object({ year: nonEmpty, label: nonEmpty })).min(2),
+    footerNote: nonEmpty,
     email: z.email(),
     resumePath: z.string().startsWith('/'),
     links: z.object({ github: z.url(), linkedin: z.url() }),
   }),
 });
 
-export const collections = { projects, experience, stats, skills, capabilities, site };
+export const collections = { projects, experience, skills, capabilities, site };

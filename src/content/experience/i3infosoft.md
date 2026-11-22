@@ -5,6 +5,6 @@ start: "04/2016"
 end: "06/2019"
 location: "Noida"
 highlights:
-  - "Selenium (Java) + TestNG automation for e-commerce web apps"
+  - "Where it started: Selenium, Java, and learning what makes a test worth keeping."
 tags: ["Selenium", "Java", "TestNG"]
 ---

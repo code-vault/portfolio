@@ -5,8 +5,8 @@ start: "07/2022"
 end: "01/2025"
 location: "Gurugram"
 highlights:
-  - "Quality CoE framework adopted by 16 verticals; trained 20+ engineers"
-  - "Led Selenium → Playwright migration for Avis Budget Group: regression 8h → 3h"
-  - "Owned microservices, Kafka and data-replication testing in a mainframe-to-AWS modernization"
+  - "Designed the shared automation foundation sixteen teams built on; it later became part of the company's own product."
+  - "Led UI test architecture through a mainframe-to-cloud migration, turning a full-day regression into a few hours."
+  - "Owned how the services, event streams and migrated data underneath were verified."
 tags: ["Playwright", "Selenium", "REST Assured", "Kafka", "AWS", "Docker"]
 ---

@@ -2,7 +2,6 @@
 // Hero: two columns on desktop (text left, pipeline card right), stacked on mobile.
 // All text comes from site.json (heroBadge, heroHeadline, oneLiner, heroTools, pipeline, resumePath).
 import { getEntry } from 'astro:content';
-import Pipeline from './Pipeline.astro';
 
 const site = (await getEntry('site', 'site'))!.data;
 ---
@@ -11,16 +10,15 @@ const site = (await getEntry('site', 'site'))!.data;
     <div class="hero-in">
       <p class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1.5 text-sm font-medium text-muted">
         <span class="h-1.5 w-1.5 rounded-full bg-violet" aria-hidden="true"></span>
-        {site.heroBadge}
+        {site.badge}
       </p>
 
       <!-- Very large, tight, near-black headline; the last word is the violet gradient -->
       <h1 class="hero-title mt-6 font-extrabold text-text">
-        {site.heroHeadline.lead}<br />
-        <span class="gradient-text">{site.heroHeadline.highlight}</span>
+        {site.heroHeadline.before}<span class="gradient-text">{site.heroHeadline.accent}</span>{site.heroHeadline.after}
       </h1>
 
-      <p class="mt-6 max-w-xl text-lg leading-relaxed text-muted">{site.oneLiner}</p>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-muted">{site.intro}</p>
 
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="/projects/" class="btn btn-primary">Explore projects</a>
@@ -32,16 +30,6 @@ const site = (await getEntry('site', 'site'))!.data;
         </a>
       </div>
 
-      <div class="mt-10">
-        <p class="label !text-muted">Working with</p>
-        <ul class="mt-3 flex flex-wrap gap-2" aria-label="Working with">
-          {site.heroTools.map((tool) => <li class="chip">{tool}</li>)}
-        </ul>
-      </div>
-    </div>
-
-    <div class="hero-in hero-in-late">
-      <Pipeline steps={site.pipeline} />
     </div>
   </div>
 </section>

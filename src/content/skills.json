@@ -1,8 +1,94 @@
 [
-  { "group": "AI/ML & GenAI Testing", "items": ["Golden datasets", "Precision/Recall/F1", "Field-level validation", "JSON schema validation", "LLM-as-judge", "Prompt regression", "CI evaluation gates", "DeepEval", "RAGAS", "Promptfoo", "Arize"] },
-  { "group": "Automation", "items": ["Playwright (TypeScript)", "Selenium (Java)", "REST Assured", "Appium", "Cucumber/BDD", "TestNG", "Pytest", "GraphQL", "Kafka"] },
-  { "group": "Agentic QA", "items": ["Playwright Test Agents", "MCP (Playwright, Atlassian)", "Claude Code", "Cursor"] },
-  { "group": "NFR", "items": ["JMeter", "k6", "OWASP ZAP", "Applitools", "Lighthouse", "Datadog", "Grafana", "Dynatrace"] },
-  { "group": "CI/CD & Cloud", "items": ["GitHub Actions", "Jenkins", "Azure DevOps", "Docker", "Kubernetes", "AWS", "Azure"] },
-  { "group": "Languages", "items": ["TypeScript", "Java", "Python", "SQL"] }
+  {
+    "group": "UI",
+    "items": [
+      "Playwright (TypeScript)",
+      "Selenium (Java)",
+      "Cucumber/BDD",
+      "Pytest",
+      "Applitools",
+      "Lighthouse"
+    ]
+  },
+  {
+    "group": "Mobile",
+    "items": [
+      "Appium",
+      "BrowserStack",
+      "LambdaTest",
+      "Sauce Labs",
+      "Android Studio / Xcode"
+    ]
+  },
+  {
+    "group": "API & services",
+    "items": [
+      "REST Assured",
+      "Postman",
+      "GraphQL",
+      "Kafka",
+      "WireMock",
+      "PostgreSQL",
+      "MongoDB"
+    ]
+  },
+  {
+    "group": "AI & agents",
+    "items": [
+      "Golden datasets",
+      "Precision/Recall/F1",
+      "LLM-as-judge",
+      "DeepEval",
+      "RAGAS",
+      "Promptfoo",
+      "Arize",
+      "Playwright Test Agents",
+      "MCP",
+      "Claude Code",
+      "Cursor"
+    ]
+  },
+  {
+    "group": "Performance & security",
+    "items": [
+      "JMeter",
+      "k6",
+      "Grafana",
+      "Datadog",
+      "Dynatrace",
+      "OWASP ZAP (basic)"
+    ]
+  },
+  {
+    "group": "CI/CD & cloud",
+    "items": [
+      "GitHub Actions",
+      "Jenkins",
+      "Azure DevOps",
+      "Docker",
+      "Kubernetes",
+      "AWS",
+      "Azure"
+    ]
+  },
+  {
+    "group": "Ways of working",
+    "items": [
+      "Test strategy",
+      "Risk-based testing",
+      "Release sign-off",
+      "Scrum",
+      "SAFe",
+      "Mentoring"
+    ]
+  },
+  {
+    "group": "Languages",
+    "items": [
+      "TypeScript",
+      "Java",
+      "Python",
+      "SQL"
+    ]
+  }
 ]

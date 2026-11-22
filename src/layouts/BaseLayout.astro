@@ -6,11 +6,13 @@ import { getEntry } from 'astro:content';
 import Nav from '../components/Nav.astro';
 
 // Optional props: the 404 page passes `title` and `minimal` (no section nav) and `noindex`.
-interface Props { title?: string; minimal?: boolean; noindex?: boolean }
-const { title, minimal = false, noindex = false } = Astro.props;
+interface Props { page?: 'home' | 'projects' | 'experience'; title?: string; description?: string; minimal?: boolean; noindex?: boolean }
+const { page = 'home', title, description, minimal = false, noindex = false } = Astro.props;
 
 const site = (await getEntry('site', 'site'))!.data;
-const pageTitle = title ?? site.metaTitle;
+// Title and description come from site.json (pages.<page>); the 404 page passes its own title.
+const pageTitle = title ?? site.pages[page].title;
+const pageDescription = description ?? site.pages[page].description;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO step
 ---
@@ -20,7 +22,7 @@ const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO ste
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
-    <meta name="description" content={site.metaDescription} />
+    <meta name="description" content={pageDescription} />
     <meta name="theme-color" content="#fafafa" />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -28,14 +30,14 @@ const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO ste
     <!-- Open Graph (link previews on LinkedIn, Slack, etc.) -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={site.metaDescription} />
+    <meta property="og:description" content={pageDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
-    <meta name="twitter:description" content={site.metaDescription} />
+    <meta name="twitter:description" content={pageDescription} />
     <meta name="twitter:image" content={ogImage} />
 
     <!-- Marks JS as available so scroll-in start states apply (see global.css) -->
@@ -56,7 +58,7 @@ const ogImage = new URL('/og.png', Astro.site).href; // generated in the SEO ste
       <slot />
     </main>
     <footer class="mx-auto max-w-6xl px-6 py-10 text-sm text-muted">
-      © {new Date().getFullYear()} {site.name}
+      © {new Date().getFullYear()} {site.name} · {site.footerNote}
     </footer>
     <script>
       import '../scripts/main';

@@ -7,11 +7,11 @@ import TagList from './TagList.astro';
 
 interface Props { project: CollectionEntry<'projects'> }
 const { data } = Astro.props.project;
-const { problem, solution, impact, diagram } = data;
+const { problem, solution, metrics, diagram } = data;
 
 // The schema already guarantees these exist for a case study; this just tells TypeScript.
-if (!problem || !solution || !impact || !diagram) {
-  throw new Error(`Case study "${data.title}" is missing problem, solution, impact or diagram.`);
+if (!problem || !solution || !metrics || !diagram) {
+  throw new Error(`Case study "${data.title}" is missing problem, solution, metrics or diagram.`);
 }
 
 const label = 'mb-2 text-xs font-semibold uppercase tracking-widest text-accent';
@@ -34,8 +34,8 @@ const label = 'mb-2 text-xs font-semibold uppercase tracking-widest text-accent'
       <div>
         <h4 class={label}>Impact</h4>
         <ul class="space-y-2 text-text">
-          {impact.map((item) => (
-            <li class="flex gap-2"><span class="text-accent" aria-hidden="true">▸</span><span>{item}</span></li>
+          {metrics.map((m) => (
+            <li class="flex gap-2"><span class="text-accent" aria-hidden="true">▸</span><span><strong>{m.value}</strong> {m.label}</span></li>
           ))}
         </ul>
       </div>

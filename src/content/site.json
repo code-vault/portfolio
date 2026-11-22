@@ -1,30 +1,106 @@
 {
   "name": "Devarshi Ojha",
-  "headline": "Lead SDET · AI Quality & GenAI Evaluation",
-  "oneLiner": "I build the test systems that let teams ship AI and web products with confidence, from Playwright frameworks to evaluation gates for LLM pipelines.",
-  "heroBadge": "Lead SDET · AI Quality",
+  "badge": "Lead SDET · Test architecture",
   "heroHeadline": {
-    "lead": "Quality for AI,",
-    "highlight": "proven."
+    "before": "I make releases ",
+    "accent": "boring",
+    "after": ", in the best way."
   },
-  "heroTools": [
-    "Playwright",
-    "TypeScript",
-    "REST Assured",
-    "DeepEval",
-    "Arize"
+  "intro": "I'm Devarshi Ojha, a Lead SDET. I design the test architecture that lets teams ship web, mobile and API products without holding their breath, and lately the AI inside them too.",
+  "previouslyAt": [
+    "KlearNow.AI",
+    "Avis Budget Group (via StatusNeo)",
+    "Publicis Sapient"
   ],
-  "metaTitle": "Devarshi Ojha · Lead SDET, AI Quality & GenAI Evaluation",
-  "metaDescription": "Lead SDET with 9+ years in test automation, AI evaluation and agentic QA: Playwright, API and NFR testing, CI quality gates.",
-  "pipeline": [
-    "Jira specs",
-    "AI agents generate tests",
-    "Web · API · Mobile",
-    "AI eval gates",
-    "Release"
+  "howITest": {
+    "title": "How I test",
+    "rows": [
+      {
+        "layer": "UI",
+        "line": "Frameworks other teams build on, not around"
+      },
+      {
+        "layer": "Mobile",
+        "line": "Android and iOS, on the devices people actually use"
+      },
+      {
+        "layer": "API & services",
+        "line": "Services, events and data, through a mainframe-to-cloud move"
+      },
+      {
+        "layer": "AI & agents",
+        "line": "Evaluation gates for models, agents in the test loop",
+        "tag": "Now"
+      }
+    ],
+    "footer": "✓ ui  ✓ mobile  ✓ api  ✓ ai"
+  },
+  "pages": {
+    "home": {
+      "title": "Devarshi Ojha · Lead SDET",
+      "description": "Lead SDET designing test architecture for web, mobile and API products, and the AI inside them."
+    },
+    "projects": {
+      "title": "Projects · Devarshi Ojha",
+      "description": "Test architecture for AI evaluation, agent-assisted testing, a mainframe-to-cloud migration and a shared QA platform."
+    },
+    "experience": {
+      "title": "Experience · Devarshi Ojha",
+      "description": "Nine years of test architecture and QA leadership, from web automation to AI evaluation."
+    }
+  },
+  "sections": {
+    "selectedWork": {
+      "label": "Selected work",
+      "heading": "A few systems I've shaped.",
+      "seeAll": "See all projects →"
+    },
+    "whatIBring": {
+      "label": "What I bring",
+      "heading": "Where I'm most useful."
+    },
+    "about": {
+      "label": "About",
+      "heading": "A bit about me.",
+      "text": "I started in 2016 with Selenium and one belief: a good test is one nobody has to babysit. Since then I've designed testing for mobile apps, content platforms, a mainframe-to-cloud migration and a GenAI document platform. The systems got bigger and stranger; the goal stayed the same, releases nobody has to worry about. AI is the newest layer and the most interesting one, because \"correct\" becomes something you measure rather than assert."
+    },
+    "contact": {
+      "label": "Contact",
+      "heading": "Let's talk.",
+      "text": "I'm exploring Lead SDET and AI quality roles. If you're building something that has to be trustworthy, I'd like to hear about it."
+    },
+    "projects": {
+      "label": "Projects",
+      "heading": "Systems I've shaped.",
+      "intro": "Four problems, each a different layer of the stack. The numbers are on each card.",
+      "sideLabel": "Side project"
+    },
+    "experience": {
+      "label": "Experience",
+      "heading": "Nine years, one layer at a time.",
+      "pathLabel": "The path",
+      "skillsHeading": "Skills, grouped by layer"
+    }
+  },
+  "path": [
+    {
+      "year": "2016",
+      "label": "Web automation"
+    },
+    {
+      "year": "2019",
+      "label": "Mobile apps and content platforms"
+    },
+    {
+      "year": "2022",
+      "label": "Test architecture at enterprise scale"
+    },
+    {
+      "year": "2026",
+      "label": "AI evaluation and agentic QA"
+    }
   ],
-  "about": "I've spent 9+ years making sure software works before users find out it doesn't, from e-commerce sites to mainframe migrations to GenAI pipelines. Lately my focus is the hardest version of that problem: testing systems whose answers aren't fixed. I believe a good test suite is a product in its own right: fast, trusted and easy for the next engineer to extend.",
-  "contactIntro": "Open to Lead SDET and AI QA roles.",
+  "footerNote": "Built with Astro, tested with Playwright.",
   "email": "career.devarshi@gmail.com",
   "resumePath": "/resume/Devarshi_Ojha_Resume.pdf",
   "links": {

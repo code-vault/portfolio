@@ -5,7 +5,7 @@ start: "06/2019"
 end: "06/2022"
 location: "Noida"
 highlights:
-  - "Sole QA for a headless AEM CMS; authored its test framework from scratch"
-  - "Contributed to Appium mobile automation on BrowserStack and real devices"
+  - "The only QA on a headless CMS, so I designed its testing from scratch, from authoring through to the CDN."
+  - "Part of the team that took mobile testing across Android and iOS."
 tags: ["AEM", "Selenium", "Appium", "BrowserStack"]
 ---

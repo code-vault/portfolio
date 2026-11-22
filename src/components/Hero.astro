@@ -1,27 +1,27 @@
 ---
-// Hero: two columns on desktop (text left, pipeline card right), stacked on mobile.
-// All text comes from site.json (heroBadge, heroHeadline, oneLiner, heroTools, pipeline, resumePath).
+// Hero: two columns on desktop (text left, "How I test" card right), stacked on mobile.
+// All copy comes from site.json: badge, heroHeadline, intro, previouslyAt, howITest, resumePath.
 import { getEntry } from 'astro:content';
+import HowITest from './HowITest.astro';
 
 const site = (await getEntry('site', 'site'))!.data;
+const { before, accent, after } = site.heroHeadline;
 ---
 <section id="top" class="hero relative isolate overflow-hidden">
-  <div class="mx-auto grid max-w-6xl items-center gap-14 px-6 pb-20 pt-14 md:pt-20 lg:grid-cols-[1.3fr_1fr] lg:gap-12 lg:pb-28 lg:pt-24">
+  <div class="mx-auto grid max-w-6xl items-center gap-14 px-6 pb-20 pt-14 md:pt-20 lg:grid-cols-[1.15fr_1fr] lg:gap-12 lg:pb-28 lg:pt-24">
     <div class="hero-in">
       <p class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1.5 text-sm font-medium text-muted">
         <span class="h-1.5 w-1.5 rounded-full bg-violet" aria-hidden="true"></span>
         {site.badge}
       </p>
 
-      <!-- Very large, tight, near-black headline; the last word is the violet gradient -->
-      <h1 class="hero-title mt-6 font-extrabold text-text">
-        {site.heroHeadline.before}<span class="gradient-text">{site.heroHeadline.accent}</span>{site.heroHeadline.after}
-      </h1>
+      <!-- Very large, tight, near-black headline; one word (the accent) is violet -->
+      <h1 class="hero-title mt-6 font-extrabold text-text">{before}<span class="gradient-text">{accent}</span>{after}</h1>
 
       <p class="mt-6 max-w-xl text-lg leading-relaxed text-muted">{site.intro}</p>
 
       <div class="mt-8 flex flex-wrap gap-3">
-        <a href="/projects/" class="btn btn-primary">Explore projects</a>
+        <a href="/projects/" class="btn btn-primary">View my work</a>
         <a href={site.resumePath} download aria-label="Download resume (PDF)" class="btn btn-secondary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" />
@@ -30,6 +30,17 @@ const site = (await getEntry('site', 'site'))!.data;
         </a>
       </div>
 
+      <!-- Plain grey company names, no logos -->
+      <div class="mt-10">
+        <p class="label !text-muted">Previously at</p>
+        <ul class="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-medium text-neutral-500" aria-label="Previously at">
+          {site.previouslyAt.map((company) => <li>{company}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="hero-in hero-in-late">
+      <HowITest title={site.howITest.title} rows={site.howITest.rows} footer={site.howITest.footer} />
     </div>
   </div>
 </section>
@@ -45,10 +56,12 @@ const site = (await getEntry('site', 'site'))!.data;
   /* Headline: clamp from 48px (mobile) up to 88px, weight 800, tight tracking */
   .hero-title {
     font-size: clamp(3rem, 4.6vw + 0.5rem, 5.5rem);
-    line-height: 1.02;
+    line-height: 1.03;
     letter-spacing: -0.03em;
+    text-wrap: balance;
   }
 
+  /* One-time entrance fade (not a loop); off for reduced motion */
   .hero-in { animation: hero-in 0.7s ease-out both; }
   .hero-in-late { animation-delay: 0.12s; }
   @keyframes hero-in {

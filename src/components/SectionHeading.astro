@@ -1,11 +1,12 @@
 ---
 // Top of every section: a small uppercase violet label, a large heading and an optional intro line.
 // Text comes from site.json (sections.*).
-interface Props { label: string; heading: string; intro?: string; id: string }
-const { label, heading, intro, id } = Astro.props;
+// `as` is the heading level: h2 for sections on a page, h1 for a page's own main heading.
+interface Props { label: string; heading: string; intro?: string; id: string; as?: 'h1' | 'h2' }
+const { label, heading, intro, id, as: Heading = 'h2' } = Astro.props;
 ---
 <div class="mb-10 max-w-3xl sm:mb-14">
   <p class="label">{label}</p>
-  <h2 id={id} class="mt-3 text-3xl font-bold tracking-tight text-text sm:text-5xl" style="letter-spacing: -0.03em;">{heading}</h2>
+  <Heading id={id} class="mt-3 text-4xl font-bold tracking-tight text-text sm:text-6xl" style="letter-spacing: -0.03em;">{heading}</Heading>
   {intro && <p class="mt-4 text-lg leading-relaxed text-muted">{intro}</p>}
 </div>

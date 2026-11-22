@@ -1,7 +1,32 @@
 ---
-// TODO (step 3): replaced by the real Projects page (all case studies + side project).
+// Projects page: all case studies (full cards) and then the side project (smaller card).
+// Everything comes from src/content/projects/ and site.json (sections.projects).
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import CaseStudyCard from '../../components/CaseStudyCard.astro';
+import SideProjectCard from '../../components/SideProjectCard.astro';
+
+const site = (await getEntry('site', 'site'))!.data;
+const head = site.sections.projects;
+
+const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const caseStudies = all.filter((p) => !p.data.side);
+const sideProjects = all.filter((p) => p.data.side);
 ---
-<BaseLayout title="Projects · Devarshi Ojha">
-  <section class="mx-auto max-w-6xl px-6 py-24"><h1 class="text-5xl font-bold tracking-tight">Projects</h1></section>
+<BaseLayout page="projects">
+  <section aria-labelledby="projects-title" class="mx-auto max-w-6xl px-6 pb-12 pt-16 sm:pt-24">
+    <SectionHeading as="h1" id="projects-title" label={head.label} heading={head.heading} intro={head.intro} />
+    <ul class="space-y-8">
+      {caseStudies.map((project) => <CaseStudyCard project={project} level="h2" />)}
+    </ul>
+  </section>
+
+  {sideProjects.length > 0 && (
+    <section class="mx-auto max-w-6xl px-6 pb-20 pt-4 sm:pb-28">
+      <div class="space-y-8">
+        {sideProjects.map((project) => <SideProjectCard project={project} label={head.sideLabel} />)}
+      </div>
+    </section>
+  )}
 </BaseLayout>

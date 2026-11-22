@@ -1,20 +1,23 @@
 // Generates public/og.png (the link-preview image for LinkedIn, Slack, X, ...).
-// It reads the name and headline from src/content/site.json, so changing your headline
-// there updates the image on the next build. Runs automatically before `npm run build` (see "prebuild").
-// Design: near-black slate background, teal accent, no photo.
+// It reads the name and badge line ("Lead SDET · Test architecture") from src/content/site.json,
+// so changing them there updates the image on the next build. Runs automatically before
+// `npm run build` (see "prebuild" in package.json).
+// Design: light, editorial. Near-white background with a faint violet tint, a white card,
+// the black "DO" monogram, near-black name and a violet line. No photo.
 import { readFileSync, mkdirSync } from 'node:fs';
 import sharp from 'sharp';
 
 const site = JSON.parse(readFileSync('src/content/site.json', 'utf8'));
 
 // Same colours as src/styles/global.css
-const BG = '#0b1016';
-const SURFACE = '#131b24';
-const ACCENT = '#2dd4bf';
-const TEXT = '#e6edf3';
-const MUTED = '#9fb0c0';
+const BG = '#fafafa';
+const CARD = '#ffffff';
+const BORDER = '#e5e5e5';
+const INK = '#0a0a0a';
+const MUTED = '#737373';
+const VIOLET = '#7c3aed';
 
-// SVG text must be escaped (the headline contains "&").
+// SVG text must be escaped.
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // Very simple word wrap: SVG does not wrap text by itself.
@@ -29,19 +32,27 @@ function wrap(text, maxChars) {
   return lines;
 }
 
-const headlineLines = wrap(site.badge, 22);
-const headlineSvg = headlineLines
-  .map((l, i) => `<text x="100" y="${360 + i * 64}" font-size="52" font-weight="600" fill="${ACCENT}">${esc(l)}</text>`)
+const badgeLines = wrap(site.badge, 34);
+const badgeSvg = badgeLines
+  .map((l, i) => `<text x="120" y="${425 + i * 56}" font-size="44" font-weight="600" fill="${VIOLET}">${esc(l)}</text>`)
   .join('\n  ');
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"
      font-family="Inter, Helvetica, Arial, sans-serif">
+  <defs>
+    <radialGradient id="tint" cx="50%" cy="0%" r="75%">
+      <stop offset="0" stop-color="${VIOLET}" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="${VIOLET}" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
   <rect width="1200" height="630" fill="${BG}"/>
-  <rect x="40" y="40" width="1120" height="550" rx="28" fill="${SURFACE}" stroke="#243040" stroke-width="2"/>
-  <rect x="100" y="150" width="90" height="8" rx="4" fill="${ACCENT}"/>
-  <text x="100" y="270" font-size="92" font-weight="700" fill="${TEXT}">${esc(site.name)}</text>
-  ${headlineSvg}
-  <text x="100" y="540" font-size="28" fill="${MUTED}">devarshiojha.dev</text>
+  <rect width="1200" height="630" fill="url(#tint)"/>
+  <rect x="60" y="60" width="1080" height="510" rx="32" fill="${CARD}" stroke="${BORDER}" stroke-width="2"/>
+  <rect x="120" y="120" width="72" height="72" rx="18" fill="${INK}"/>
+  <text x="156" y="167" font-size="30" font-weight="700" fill="#ffffff" text-anchor="middle">DO</text>
+  <text x="120" y="340" font-size="104" font-weight="800" fill="${INK}" letter-spacing="-3">${esc(site.name)}</text>
+  ${badgeSvg}
+  <text x="120" y="528" font-size="28" fill="${MUTED}">devarshiojha.dev</text>
 </svg>`;
 
 mkdirSync('public', { recursive: true });

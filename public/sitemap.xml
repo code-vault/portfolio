@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Static sitemap (no package needed). This is a single-page site; add a <url> block if you ever add pages. -->
+<!-- Static sitemap (no package needed). One <url> per page; add a block if you ever add a page. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://devarshiojha.dev/</loc>
+  </url>
+  <url>
+    <loc>https://devarshiojha.dev/projects/</loc>
+  </url>
+  <url>
+    <loc>https://devarshiojha.dev/experience/</loc>
   </url>
 </urlset>
